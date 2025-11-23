@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Weapons Calculation</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #111111;
+            --border-color: #333;
+            --accent-color: #4CAF50; /* Màu xanh lá cây */
+            --time-color: #2979ff; /* Màu xanh dương */
+            --text-main: #ffffff;
+            --text-muted: #888888;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+        .note {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            background-color: #000;
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        
+        select {
+            cursor: pointer;
+        }
+
+        /* --- TAB SYSTEM CSS --- */
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--text-main);
+        }
+
+        /* OUTPUT PANEL */
+        .output-box h2 {
+            color: var(--time-color); 
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .output-stats div {
+            padding: 15px 0;
+            border-bottom: 1px dashed #222;
+        }
+        
+        /* CSS cho mục mới (Mastery theo thời gian) */
+        .time-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .time-input-group label {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        /* Thẻ kết quả mới */
+        .result-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px; 
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .stat-value.time {
+            color: var(--time-color);
+            font-size: 18px; 
+        }
+        
+        .stat-value.damage {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        
+        .result-item {
+            padding: 15px 0;
+            border-bottom: 1px dashed #222;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        /* Ẩn kết quả không liên quan đến tab */
+        #rankOutput, #masteryOutput {
+            display: none;
+        }
+        #rankOutput {
+            display: block; /* Mặc định hiển thị Rank */
+        }
+
+        /* Custom scrollbar for select */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚔️ Anime Weapons Calculation</h1>
+    <div class="note">Công cụ tính toán Sát thương, Mastery và Rank Progression.</div>
+
+    <div class="card-grid">
+        <!-- CỘT TRÁI: NHẬP LIỆU & TAB NAV -->
+        <div class="panel">
+            <h2>Thiết lập</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-button active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
+                <button class="tab-button" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss & Mastery</button>
+            </div>
+
+            <!-- CHUNG: POWER INPUT (MASTERTY/CLICK - VẪN CẦN CHO RANK) -->
+            <div id="masteryClickInput">
+                <div class="section-label">Giá trị 1 Click (Mastery)</div>
+                <div class="input-group" style="display:flex; gap:10px;">
+                    <input type="number" id="clickVal" value="0" oninput="window.handleInput('clickVal')" style="flex:2;">
+                    <select id="clickUnit" onchange="window.handleInput('clickUnit')" style="flex:1;">
+                        <!-- JS will populate units -->
+                    </select>
+                </div>
+            </div>
+            
+            <!-- SECTION 1: RANK TRACKER INPUTS -->
+            <div id="rankInputs">
+                <div class="section-label">Rank hiện tại</div>
+                <div class="input-group">
+                    <select id="currentRank" onchange="window.syncTargetRank()">
+                        <!-- JS will populate ranks 0 to 99 here -->
+                    </select>
+                </div>
+
+                <div class="section-label">Rank mục tiêu</div>
+                <div class="input-group">
+                    <select id="targetRank" onchange="window.calculate()">
+                        <!-- JS will populate ranks 1 to 100 here -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- SECTION 2: BOSS & MASTERY INPUTS (CHỈ HIỆN KHI Ở TAB BOSS) -->
+            <div id="masteryInputs" style="display:none;">
+                
+                <div class="section-label">Giá trị 1 Click (Sát thương)</div>
+                <div class="input-group" style="display:flex; gap:10px;">
+                    <input type="number" id="damageVal" value="0" oninput="window.handleInput('damageVal')" style="flex:2;">
+                    <select id="damageUnit" onchange="window.handleInput('damageUnit')" style="flex:1;">
+                        <!-- JS will populate units -->
+                    </select>
+                </div>
+
+                <div class="section-label">Máu Boss (HP) cần đánh</div>
+                <div class="input-group" style="display:flex; gap:10px;">
+                    <input type="number" id="bossHpVal" value="0" oninput="window.handleInput('bossHpVal')" style="flex:2;">
+                    <select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')" style="flex:1;">
+                        <!-- JS will populate units -->
+                    </select>
+                </div>
+
+                <div class="section-label">Thời gian muốn cày Mastery</div>
+                <div class="time-input-group">
+                    <div>
+                        <label for="timeHours">Giờ</label>
+                        <input type="number" id="timeHours" value="0" min="0" oninput="window.handleInput('timeHours')">
+                    </div>
+                    <div>
+                        <label for="timeMinutes">Phút</label>
+                        <input type="number" id="timeMinutes" value="0" min="0" max="59" oninput="window.handleInput('timeMinutes')">
+                    </div>
+                    <div>
+                        <label for="timeSeconds">Giây</label>
+                        <input type="number" id="timeSeconds" value="0" min="0" max="59" oninput="window.handleInput('timeSeconds')">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CỘT PHẢI: KẾT QUẢ - ĐƯỢC ẨN/HIỆN THEO TAB -->
+        <div>
+            <!-- KẾT QUẢ RANK -->
+            <div id="rankOutput">
+                <div class="result-card output-box">
+                    <h2>Kết quả Rank</h2>
+                    <div id="rankOutputStats" class="output-stats">
+                        
+                        <!-- Tổng Chi phí -->
+                        <div>
+                            <div class="stat-label">⚔️ Tổng Mastery cần cày</div>
+                            <div class="stat-value" id="totalCostDisplay">---</div>
+                        </div>
+
+                        <!-- Tốc độ cày & Thời gian (Auto 6.7x) -->
+                        <div>
+                            <div class="stat-label">✨ Sát thương/giây - Auto (6.7x)</div>
+                            <div class="stat-value damage" id="dpsAutoDisplay">---</div>
+                            <div class="stat-label">⏱️ Thời gian cày (6.7x)</div>
+                            <div class="stat-value time" id="timeAutoDisplay">---</div>
+                        </div>
+
+                        <!-- Tốc độ cày & Thời gian (Nor 5x) -->
+                        <div>
+                            <div class="stat-label">✨ Sát thương/giây - Nor (5x)</div>
+                            <div class="stat-value damage" id="dpsNorDisplay">---</div>
+                            <div class="stat-label">⏱️ Thời gian cày (5x)</div>
+                            <div class="stat-value time" id="timeNorDisplay">---</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KẾT QUẢ BOSS & MASTERY -->
+            <div id="masteryOutput" style="display:none;">
+                
+                <!-- CARD 1: KẾT QUẢ BOSS TIME -->
+                <div class="result-card">
+                    <h2>Thời gian Hạ Boss</h2>
+                    <div class="output-stats">
+                        <div class="result-item">
+                            <div class="stat-label">⏱️ Thời gian Hạ Boss - Auto (6.7x)</div>
+                            <div class="stat-value time" id="bossTimeAuto">---</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="stat-label">⏱️ Thời gian Hạ Boss - Nor (5x)</div>
+                            <div class="stat-value time" id="bossTimeNor">---</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: KẾT QUẢ MASTERY -->
+                <div class="result-card">
+                    <h2>Mastery Đạt được</h2>
+                    <div class="output-stats">
+                        <div class="result-item">
+                            <div class="stat-label">Mastery đạt được (Auto 6.7x)</div>
+                            <div class="stat-value" id="masteryByTimeAuto">---</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="stat-label">Mastery đạt được (Nor 5x)</div>
+                            <div class="stat-value" id="masteryByTimeNor">---</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Global Firebase Variables (Provided by Canvas Environment)
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    
+    let db;
+    let auth;
+    let userId = '';
+    const userSettingsPath = `artifacts/${appId}/users/`;
+    const settingsDocName = 'calculator_settings';
+    
+    // --- 1. CONFIGURATION ---
+    
+    const SCALING_FACTOR = 8.400;
+    const BASE_COST_MAGNITUDE = 30; 
+    const K_EXPONENT = 3; 
+    const CPS_AUTO = 6.7;
+    const CPS_NOR = 5.0; 
+
+    const UNITS = [
+        { name: '', exp: 0 }, { name: 'K', exp: 3 }, { name: 'M', exp: 6 }, { name: 'B', exp: 9 }, { name: 'T', exp: 12 }, 
+        { name: 'Qa', exp: 15 }, { name: 'Qi', exp: 18 }, { name: 'Sx', exp: 21 }, { name: 'Sp', exp: 24 }, { name: 'Oc', exp: 27 }, 
+        { name: 'No', exp: 30 }, { name: 'Dc', exp: 33 }, 
+        { name: 'Ud', exp: 36 }, { name: 'Dd', exp: 39 }, 
+        { name: 'Td', exp: 42 }, { name: 'Qad', exp: 45 }, { name: 'Qid', exp: 48 }, { name: 'Sxd', exp: 51 }, { name: 'Spd', exp: 54 }, 
+        { name: 'Ocd', exp: 57 }, { name: 'Nod', exp: 60 }, { name: 'Dec', exp: 63 }, { name: 'Und', exp: 66 }, { name: 'Duo', exp: 69 },
+        { name: 'Tri', exp: 72 } 
+    ];
+
+    const RANK_COSTS = {};
+
+    // --- 2. CORE UTILITY FUNCTIONS ---
+    
+    // Chuyển raw number sang chuỗi hiển thị đẹp (ví dụ: 56.34 Ud)
+    function formatNumber(rawVal) {
+        if (rawVal === 0) return "0";
+        if (rawVal < 0) return "Error";
+
+        let unitIdx = 0;
+        for (let i = UNITS.length - 1; i >= 0; i--) {
+            if (rawVal >= Math.pow(10, UNITS[i].exp)) {
+                unitIdx = i;
+                break;
+            }
+        }
+        
+        const displayVal = rawVal / Math.pow(10, UNITS[unitIdx].exp);
+        const unitName = UNITS[unitIdx].name === '' ? '' : UNITS[unitIdx].name;
+        return `${displayVal.toFixed(2)}${unitName ? ' ' + unitName : ''}`;
+    }
+
+    // Chuyển raw seconds sang chuỗi thời gian (Năm, Tháng, Ngày...) VỚI MILISECONDS
+    function formatTimeDisplay(totalSeconds) {
+        if (!isFinite(totalSeconds) || totalSeconds <= 0) return "0 Giây";
+
+        const SECONDS_PER_YEAR = 31536000;
+        const SECONDS_PER_MONTH = 2592000; 
+        const SECONDS_PER_DAY = 86400;
+        const SECONDS_PER_HOUR = 3600;
+        const SECONDS_PER_MINUTE = 60;
+        
+        let remainingSeconds = totalSeconds;
+        let timeParts = [];
+        
+        const years = Math.floor(remainingSeconds / SECONDS_PER_YEAR);
+        remainingSeconds %= SECONDS_PER_YEAR;
+        if (years > 0) timeParts.push(`${years} Năm`);
+
+        const months = Math.floor(remainingSeconds / SECONDS_PER_MONTH);
+        remainingSeconds %= SECONDS_PER_MONTH;
+        if (months > 0) timeParts.push(`${months} Tháng`);
+
+        const days = Math.floor(remainingSeconds / SECONDS_PER_DAY);
+        remainingSeconds %= SECONDS_PER_DAY;
+        if (days > 0) timeParts.push(`${days} Ngày`);
+
+        const hours = Math.floor(remainingSeconds / SECONDS_PER_HOUR);
+        remainingSeconds %= SECONDS_PER_HOUR;
+        if (hours > 0) timeParts.push(`${hours} Giờ`);
+
+        const minutes = Math.floor(remainingSeconds / SECONDS_PER_MINUTE);
+        remainingSeconds %= SECONDS_PER_MINUTE;
+        if (minutes > 0) timeParts.push(`${minutes} Phút`);
+        
+        // Hiển thị giây với 2 chữ số thập phân (miliseconds)
+        const secondsDisplay = remainingSeconds.toFixed(2); 
+
+        // Nếu có các đơn vị lớn, hiển thị giây có thập phân
+        if (timeParts.length > 0 || totalSeconds < 60) {
+             timeParts.push(`${secondsDisplay} Giây`);
+        } else {
+             // Chỉ hiển thị giây với thập phân nếu thời gian tổng < 1 phút
+             timeParts.push(`${secondsDisplay} Giây`);
+        }
+        
+        if (timeParts.length > 5) timeParts = timeParts.slice(0, 5); 
+
+        return timeParts.join(' ');
+    }
+
+    // Lấy giá trị 1 Click Mastery thô
+    function getRawMasteryClickValue() {
+        const val = parseFloat(document.getElementById('clickVal').value);
+        const unitIdx = parseInt(document.getElementById('clickUnit').value);
+        if (isNaN(val)) return 0;
+        return val * Math.pow(10, UNITS[unitIdx].exp);
+    }
+
+    // Lấy giá trị 1 Click Damage thô
+    function getRawDamageClickValue() {
+        const val = parseFloat(document.getElementById('damageVal').value);
+        const unitIdx = parseInt(document.getElementById('damageUnit').value);
+        if (isNaN(val)) return 0;
+        return val * Math.pow(10, UNITS[unitIdx].exp);
+    }
+
+    // Lấy giá trị Boss HP thô
+    function getRawBossHpValue() {
+        const val = parseFloat(document.getElementById('bossHpVal').value);
+        const unitIdx = parseInt(document.getElementById('bossHpUnit').value);
+        if (isNaN(val)) return 0;
+        return val * Math.pow(10, UNITS[unitIdx].exp);
+    }
+
+    // --- 3. RANK COST CALCULATION ---
+
+    // Xây dựng Database Chi phí từ R0 -> R100
+    function buildRankCosts() {
+        let currentCost = BASE_COST_MAGNITUDE * Math.pow(10, K_EXPONENT); 
+        
+        RANK_COSTS[0] = currentCost;
+
+        for (let i = 1; i <= 99; i++) {
+            currentCost *= SCALING_FACTOR;
+            RANK_COSTS[i] = currentCost;
+        }
+    }
+
+    // --- 4. FIREBASE AND PERSISTENCE ---
+
+    // Hàm lưu trạng thái hiện tại của UI vào Firestore
+    async function saveSettings() {
+        if (!userId || !db) return;
+
+        const settings = {
+            activeTab: document.querySelector('.tab-button.active').id,
+            clickVal: document.getElementById('clickVal').value, // Mastery
+            clickUnit: document.getElementById('clickUnit').value, // Mastery Unit
+            damageVal: document.getElementById('damageVal').value, // NEW Damage
+            damageUnit: document.getElementById('damageUnit').value, // NEW Damage Unit
+            currentRank: document.getElementById('currentRank').value,
+            targetRank: document.getElementById('targetRank').value,
+            bossHpVal: document.getElementById('bossHpVal').value,
+            bossHpUnit: document.getElementById('bossHpUnit').value,
+            timeHours: document.getElementById('timeHours').value,
+            timeMinutes: document.getElementById('timeMinutes').value,
+            timeSeconds: document.getElementById('timeSeconds').value,
+        };
+        
+        try {
+            await setDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName), settings);
+        } catch (error) {
+            console.error("Lỗi khi lưu cài đặt vào Firestore:", error);
+        }
+    }
+
+    // Hàm tải và áp dụng trạng thái đã lưu
+    async function loadSettings() {
+        if (!userId || !db) return;
+
+        try {
+            const docSnap = await getDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName));
+            if (docSnap.exists()) {
+                const settings = docSnap.data();
+                
+                // Áp dụng các giá trị đã lưu
+                document.getElementById('clickVal').value = settings.clickVal || '0';
+                document.getElementById('clickUnit').value = settings.clickUnit || '1'; // K
+                document.getElementById('damageVal').value = settings.damageVal || '0'; // NEW Damage
+                document.getElementById('damageUnit').value = settings.damageUnit || '1'; // NEW Damage Unit
+                document.getElementById('currentRank').value = settings.currentRank || '0';
+                document.getElementById('targetRank').value = settings.targetRank || '1';
+                document.getElementById('bossHpVal').value = settings.bossHpVal || '0';
+                document.getElementById('bossHpUnit').value = settings.bossHpUnit || '1'; // K
+                document.getElementById('timeHours').value = settings.timeHours || '0';
+                document.getElementById('timeMinutes').value = settings.timeMinutes || '0';
+                document.getElementById('timeSeconds').value = settings.timeSeconds || '0';
+                
+                // Đồng bộ tab
+                const activeTab = settings.activeTab === 'masteryTabBtn' ? 'mastery' : 'rank';
+                window.showSection(activeTab, false); // Tải mà không lưu lại
+                
+                // Kích hoạt tính toán
+                window.handleInput();
+
+            } else {
+                // Nếu chưa có cài đặt, chạy tính toán mặc định
+                window.handleInput();
+            }
+        } catch (error) {
+            console.error("Lỗi khi tải cài đặt từ Firestore:", error);
+            window.handleInput();
+        }
+    }
+
+    // Hàm khởi tạo Firebase và xác thực
+    async function setupFirebase() {
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
+            console.warn("Cảnh báo: Firebase Config không hợp lệ hoặc thiếu.");
+            return;
+        }
+
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        
+        try {
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (error) {
+            console.error("Lỗi xác thực Firebase:", error);
+            // Tiếp tục với tài khoản ẩn danh nếu Custom Token thất bại
+            await signInAnonymously(auth);
+        }
+
+        // Lắng nghe thay đổi trạng thái xác thực để lấy userId và tải dữ liệu
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userId = user.uid;
+                loadSettings();
+            } else {
+                console.log("Người dùng chưa được xác thực.");
+            }
+        });
+    }
+
+    // Hàm xử lý sự kiện input và gọi saveSettings
+    function handleInput(inputId) {
+        // Gọi tính toán trước
+        const activeTab = document.querySelector('.tab-button.active').id;
+        if (activeTab === 'rankTabBtn') {
+            window.calculate();
+        } else {
+            window.calculateMasteryAndBossTime();
+        }
+        
+        // Sau đó lưu cài đặt
+        saveSettings();
+    }
+    // Gán hàm vào window để HTML có thể truy cập
+    window.handleInput = handleInput;
+
+
+    // --- 5. UI CONTROL LOGIC ---
+
+    // Hàm đồng bộ Rank mục tiêu (chỉ chạy khi ở tab Rank)
+    function syncTargetRank() {
+        const currentRankEl = document.getElementById('currentRank');
+        const targetRankEl = document.getElementById('targetRank');
+        
+        const currentRank = parseInt(currentRankEl.value);
+        let newTargetRank = currentRank + 1;
+        
+        if (newTargetRank > 100) {
+            newTargetRank = 100;
+        }
+
+        targetRankEl.value = newTargetRank;
+        window.calculate();
+        saveSettings();
+    }
+    // Gán hàm vào window
+    window.syncTargetRank = syncTargetRank;
+
+
+    // Hàm chuyển đổi giữa các tab
+    function showSection(sectionId, shouldSave = true) {
+        const isRank = sectionId === 'rank';
+        
+        // Cập nhật buttons
+        document.getElementById('rankTabBtn').classList.toggle('active', isRank);
+        document.getElementById('masteryTabBtn').classList.toggle('active', !isRank);
+
+        // Cập nhật input sections (Ẩn/hiện trường nhập DAMAGE)
+        document.getElementById('rankInputs').style.display = isRank ? 'block' : 'none';
+        document.getElementById('masteryInputs').style.display = isRank ? 'none' : 'block';
+
+        // Cập nhật trường Mastery/Click (luôn hiện, nhưng nhãn có thể thay đổi)
+        document.getElementById('masteryClickInput').style.display = 'block';
+
+        // Cập nhật output sections
+        document.getElementById('rankOutput').style.display = isRank ? 'block' : 'none';
+        document.getElementById('masteryOutput').style.display = isRank ? 'none' : 'block';
+        
+        // Kích hoạt tính toán khi chuyển tab
+        if (isRank) {
+            window.calculate();
+        } else {
+            window.calculateMasteryAndBossTime();
+        }
+
+        if (shouldSave) {
+            saveSettings();
+        }
+    }
+    // Gán hàm vào window
+    window.showSection = showSection;
+
+
+    // Hàm khởi tạo Dropdown và các giá trị mặc định
+    function initUI() {
+        buildRankCosts();
+
+        const rankSelects = ['currentRank', 'targetRank'];
+        rankSelects.forEach(id => {
+            const el = document.getElementById(id);
+            for (let i = 0; i <= 100; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = `Rank ${i}`;
+                if (id === 'currentRank' && i === 0) option.selected = true; 
+                if (id === 'targetRank' && i === 1) option.selected = true; 
+                el.appendChild(option);
+            }
+        });
+        
+        const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit']; // Thêm damageUnit
+        unitSelects.forEach(id => {
+            const el = document.getElementById(id);
+            UNITS.forEach((u, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = u.name === '' ? '(None)' : u.name;
+                if(u.name === 'K') option.selected = true; 
+                el.appendChild(option);
+            });
+        });
+    }
+
+    // --- 6. CALCULATION FUNCTIONS ---
+
+    // Main calculation function (Tính Chi phí & Thời gian Rank)
+    function calculate() {
+        const startRank = parseInt(document.getElementById('currentRank').value);
+        const endRank = parseInt(document.getElementById('targetRank').value);
+        const clickValRaw = getRawMasteryClickValue(); // Dùng Mastery Click Value cho Rank
+
+        const costDisplayEl = document.getElementById('totalCostDisplay');
+        const dpsAutoDisplayEl = document.getElementById('dpsAutoDisplay');
+        const timeAutoDisplayEl = document.getElementById('timeAutoDisplay');
+        const dpsNorDisplayEl = document.getElementById('dpsNorDisplay');
+        const timeNorDisplayEl = document.getElementById('timeNorDisplay');
+        
+        if (startRank >= endRank) {
+            costDisplayEl.innerText = "Rank mục tiêu phải cao hơn";
+            dpsAutoDisplayEl.innerText = "---";
+            timeAutoDisplayEl.innerText = "0 Giây";
+            dpsNorDisplayEl.innerText = "---";
+            timeNorDisplayEl.innerText = "0 Giây";
+            return;
+        }
+
+        let totalCost = 0;
+
+        // 1. Calculate Total Cost
+        for (let i = startRank; i < endRank; i++) {
+            if (RANK_COSTS[i]) {
+                totalCost += RANK_COSTS[i];
+            } else {
+                costDisplayEl.innerText = "Lỗi: Dữ liệu Rank không đủ";
+                timeAutoDisplayEl.innerText = "---";
+                timeNorDisplayEl.innerText = "---";
+                return;
+            }
+        }
+
+        // 2. Calculate Damage per second and Time for AUTO (6.7 CPS)
+        const dpsAutoRaw = clickValRaw * CPS_AUTO;
+        let timeAutoSeconds = 0;
+        if (dpsAutoRaw > 0) {
+            timeAutoSeconds = totalCost / dpsAutoRaw;
+        }
+
+        // 3. Calculate Damage per second and Time for NOR (5.0 CPS)
+        const dpsNorRaw = clickValRaw * CPS_NOR;
+        let timeNorSeconds = 0;
+        if (dpsNorRaw > 0) {
+            timeNorSeconds = totalCost / dpsNorRaw;
+        }
+
+        // Update UI
+        costDisplayEl.innerText = formatNumber(totalCost);
+        
+        // Update AUTO 6.7x
+        dpsAutoDisplayEl.innerText = formatNumber(dpsAutoRaw) + '/s';
+        timeAutoDisplayEl.innerText = dpsAutoRaw > 0 ? formatTimeDisplay(timeAutoSeconds) : "Vô cực (Sát thương = 0)";
+
+        // Update NOR 5x
+        dpsNorDisplayEl.innerText = formatNumber(dpsNorRaw) + '/s';
+        timeNorDisplayEl.innerText = dpsNorRaw > 0 ? formatTimeDisplay(timeNorSeconds) : "Vô cực (Sát thương = 0)";
+    }
+    // Gán hàm vào window
+    window.calculate = calculate;
+    
+    // NEW FUNCTION: Tính Mastery theo thời gian và Thời gian Hạ Boss
+    function calculateMasteryAndBossTime() {
+        const masteryClickValRaw = getRawMasteryClickValue(); // Dùng Mastery cho Mastery đạt được
+        const damageClickValRaw = getRawDamageClickValue(); // Dùng Damage cho Boss Time
+        const bossHpRaw = getRawBossHpValue();
+        
+        // 1. Calculate Damage per second (Dùng Damage Click Value)
+        const dpsAutoRaw = damageClickValRaw * CPS_AUTO;
+        const dpsNorRaw = damageClickValRaw * CPS_NOR;
+
+        // --- A. Tính Thời gian Hạ Boss ---
+        let bossTimeAuto = 0;
+        if (dpsAutoRaw > 0) {
+            bossTimeAuto = bossHpRaw / dpsAutoRaw;
+        }
+        
+        let bossTimeNor = 0;
+        if (dpsNorRaw > 0) {
+            bossTimeNor = bossHpRaw / dpsNorRaw;
+        }
+        
+        // Cập nhật kết quả Boss
+        document.getElementById('bossTimeAuto').innerText = dpsAutoRaw > 0 ? formatTimeDisplay(bossTimeAuto) : "Vô cực (Sát thương = 0)";
+        document.getElementById('bossTimeNor').innerText = dpsNorRaw > 0 ? formatTimeDisplay(bossTimeNor) : "Vô cực (Sát thương = 0)";
+
+
+        // --- B. Tính Mastery đạt được theo thời gian ---
+        // Lấy tổng thời gian (giây) từ input
+        const hours = parseFloat(document.getElementById('timeHours').value) || 0;
+        const minutes = parseFloat(document.getElementById('timeMinutes').value) || 0;
+        const seconds = parseFloat(document.getElementById('timeSeconds').value) || 0;
+        
+        const totalTimeSeconds = (hours * 3600) + (minutes * 60) + seconds;
+        
+        // Tính Mastery đạt được (Dùng Mastery Click Value)
+        const masteryAuto = masteryClickValRaw * CPS_AUTO * totalTimeSeconds;
+        const masteryNor = masteryClickValRaw * CPS_NOR * totalTimeSeconds;
+        
+        // Cập nhật kết quả Mastery
+        document.getElementById('masteryByTimeAuto').innerText = formatNumber(masteryAuto);
+        document.getElementById('masteryByTimeNor').innerText = formatNumber(masteryNor);
+    }
+    // Gán hàm vào window
+    window.calculateMasteryAndBossTime = calculateMasteryAndBossTime;
+
+
+    // Initial run
+    window.onload = () => {
+        initUI();
+        setupFirebase();
+    };
+</script>
+
+</body>
+</html>
