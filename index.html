@@ -219,7 +219,7 @@
                 <button class="tab-button" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss & Mastery</button>
             </div>
 
-            <!-- CHUNG: POWER INPUT (MASTERTY/CLICK - VẪN CẦN CHO RANK) -->
+            <!-- CHUNG: POWER INPUT (MASTERTY/CLICK - VẪN CẦN CHO CẢ HAI) -->
             <div id="masteryClickInput">
                 <div class="section-label">Giá trị 1 Click (Mastery)</div>
                 <div class="input-group" style="display:flex; gap:10px;">
@@ -232,18 +232,16 @@
             
             <!-- SECTION 1: RANK TRACKER INPUTS -->
             <div id="rankInputs">
-                <div class="section-label">Rank hiện tại</div>
+                <div class="section-label">Rank hiện tại (0-100)</div>
                 <div class="input-group">
-                    <select id="currentRank" onchange="window.syncTargetRank()">
-                        <!-- JS will populate ranks 0 to 99 here -->
-                    </select>
+                    <!-- ĐÃ ĐỔI SANG INPUT NUMBER -->
+                    <input type="number" id="currentRank" min="0" max="100" value="0" oninput="window.syncTargetRank()">
                 </div>
 
-                <div class="section-label">Rank mục tiêu</div>
+                <div class="section-label">Rank mục tiêu (1-100)</div>
                 <div class="input-group">
-                    <select id="targetRank" onchange="window.calculate()">
-                        <!-- JS will populate ranks 1 to 100 here -->
-                    </select>
+                    <!-- ĐÃ ĐỔI SANG INPUT NUMBER -->
+                    <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
                 </div>
             </div>
 
@@ -301,7 +299,7 @@
 
                         <!-- Tốc độ cày & Thời gian (Auto 6.7x) -->
                         <div>
-                            <div class="stat-label">✨ Sát thương/giây - Auto (6.7x)</div>
+                            <div class="stat-label">✨ Mastery nhận được 1s Fast (6.7x)</div>
                             <div class="stat-value damage" id="dpsAutoDisplay">---</div>
                             <div class="stat-label">⏱️ Thời gian cày (6.7x)</div>
                             <div class="stat-value time" id="timeAutoDisplay">---</div>
@@ -309,7 +307,7 @@
 
                         <!-- Tốc độ cày & Thời gian (Nor 5x) -->
                         <div>
-                            <div class="stat-label">✨ Sát thương/giây - Nor (5x)</div>
+                            <div class="stat-label">✨ Mastery nhận được 1s Nor (5x)</div>
                             <div class="stat-value damage" id="dpsNorDisplay">---</div>
                             <div class="stat-label">⏱️ Thời gian cày (5x)</div>
                             <div class="stat-value time" id="timeNorDisplay">---</div>
@@ -386,14 +384,15 @@
         { name: 'Ud', exp: 36 }, { name: 'Dd', exp: 39 }, 
         { name: 'Td', exp: 42 }, { name: 'Qad', exp: 45 }, { name: 'Qid', exp: 48 }, { name: 'Sxd', exp: 51 }, { name: 'Spd', exp: 54 }, 
         { name: 'Ocd', exp: 57 }, { name: 'Nod', exp: 60 }, { name: 'Dec', exp: 63 }, { name: 'Und', exp: 66 }, { name: 'Duo', exp: 69 },
-        { name: 'Tri', exp: 72 } 
+        { name: 'Tri', exp: 72 },
+        { name: 'Qua', exp: 75 }, { name: 'Qui', exp: 78 }, { name: 'Six', exp: 81 }, 
+        { name: 'Sep', exp: 84 }, { name: 'Oct', exp: 87 }, { name: 'Nuo', exp: 90 }
     ];
 
     const RANK_COSTS = {};
 
     // --- 2. CORE UTILITY FUNCTIONS ---
     
-    // Chuyển raw number sang chuỗi hiển thị đẹp (ví dụ: 56.34 Ud)
     function formatNumber(rawVal) {
         if (rawVal === 0) return "0";
         if (rawVal < 0) return "Error";
@@ -411,7 +410,6 @@
         return `${displayVal.toFixed(2)}${unitName ? ' ' + unitName : ''}`;
     }
 
-    // Chuyển raw seconds sang chuỗi thời gian (Năm, Tháng, Ngày...) VỚI MILISECONDS
     function formatTimeDisplay(totalSeconds) {
         if (!isFinite(totalSeconds) || totalSeconds <= 0) return "0 Giây";
 
@@ -444,14 +442,11 @@
         remainingSeconds %= SECONDS_PER_MINUTE;
         if (minutes > 0) timeParts.push(`${minutes} Phút`);
         
-        // Hiển thị giây với 2 chữ số thập phân (miliseconds)
         const secondsDisplay = remainingSeconds.toFixed(2); 
 
-        // Nếu có các đơn vị lớn, hiển thị giây có thập phân
         if (timeParts.length > 0 || totalSeconds < 60) {
              timeParts.push(`${secondsDisplay} Giây`);
         } else {
-             // Chỉ hiển thị giây với thập phân nếu thời gian tổng < 1 phút
              timeParts.push(`${secondsDisplay} Giây`);
         }
         
@@ -460,7 +455,6 @@
         return timeParts.join(' ');
     }
 
-    // Lấy giá trị 1 Click Mastery thô
     function getRawMasteryClickValue() {
         const val = parseFloat(document.getElementById('clickVal').value);
         const unitIdx = parseInt(document.getElementById('clickUnit').value);
@@ -468,7 +462,6 @@
         return val * Math.pow(10, UNITS[unitIdx].exp);
     }
 
-    // Lấy giá trị 1 Click Damage thô
     function getRawDamageClickValue() {
         const val = parseFloat(document.getElementById('damageVal').value);
         const unitIdx = parseInt(document.getElementById('damageUnit').value);
@@ -476,7 +469,6 @@
         return val * Math.pow(10, UNITS[unitIdx].exp);
     }
 
-    // Lấy giá trị Boss HP thô
     function getRawBossHpValue() {
         const val = parseFloat(document.getElementById('bossHpVal').value);
         const unitIdx = parseInt(document.getElementById('bossHpUnit').value);
@@ -486,12 +478,9 @@
 
     // --- 3. RANK COST CALCULATION ---
 
-    // Xây dựng Database Chi phí từ R0 -> R100
     function buildRankCosts() {
         let currentCost = BASE_COST_MAGNITUDE * Math.pow(10, K_EXPONENT); 
-        
         RANK_COSTS[0] = currentCost;
-
         for (let i = 1; i <= 99; i++) {
             currentCost *= SCALING_FACTOR;
             RANK_COSTS[i] = currentCost;
@@ -500,16 +489,15 @@
 
     // --- 4. FIREBASE AND PERSISTENCE ---
 
-    // Hàm lưu trạng thái hiện tại của UI vào Firestore
     async function saveSettings() {
         if (!userId || !db) return;
 
         const settings = {
             activeTab: document.querySelector('.tab-button.active').id,
-            clickVal: document.getElementById('clickVal').value, // Mastery
-            clickUnit: document.getElementById('clickUnit').value, // Mastery Unit
-            damageVal: document.getElementById('damageVal').value, // NEW Damage
-            damageUnit: document.getElementById('damageUnit').value, // NEW Damage Unit
+            clickVal: document.getElementById('clickVal').value,
+            clickUnit: document.getElementById('clickUnit').value,
+            damageVal: document.getElementById('damageVal').value,
+            damageUnit: document.getElementById('damageUnit').value,
             currentRank: document.getElementById('currentRank').value,
             targetRank: document.getElementById('targetRank').value,
             bossHpVal: document.getElementById('bossHpVal').value,
@@ -526,7 +514,6 @@
         }
     }
 
-    // Hàm tải và áp dụng trạng thái đã lưu
     async function loadSettings() {
         if (!userId || !db) return;
 
@@ -535,11 +522,11 @@
             if (docSnap.exists()) {
                 const settings = docSnap.data();
                 
-                // Áp dụng các giá trị đã lưu
+                // Cập nhật DOM
                 document.getElementById('clickVal').value = settings.clickVal || '0';
                 document.getElementById('clickUnit').value = settings.clickUnit || '1'; // K
-                document.getElementById('damageVal').value = settings.damageVal || '0'; // NEW Damage
-                document.getElementById('damageUnit').value = settings.damageUnit || '1'; // NEW Damage Unit
+                document.getElementById('damageVal').value = settings.damageVal || '0';
+                document.getElementById('damageUnit').value = settings.damageUnit || '1'; // K
                 document.getElementById('currentRank').value = settings.currentRank || '0';
                 document.getElementById('targetRank').value = settings.targetRank || '1';
                 document.getElementById('bossHpVal').value = settings.bossHpVal || '0';
@@ -548,15 +535,15 @@
                 document.getElementById('timeMinutes').value = settings.timeMinutes || '0';
                 document.getElementById('timeSeconds').value = settings.timeSeconds || '0';
                 
-                // Đồng bộ tab
                 const activeTab = settings.activeTab === 'masteryTabBtn' ? 'mastery' : 'rank';
-                window.showSection(activeTab, false); // Tải mà không lưu lại
                 
-                // Kích hoạt tính toán
-                window.handleInput();
+                setTimeout(() => {
+                    window.showSection(activeTab, false); 
+                    window.calculate();
+                    window.calculateMasteryAndBossTime();
+                }, 50);
 
             } else {
-                // Nếu chưa có cài đặt, chạy tính toán mặc định
                 window.handleInput();
             }
         } catch (error) {
@@ -565,7 +552,6 @@
         }
     }
 
-    // Hàm khởi tạo Firebase và xác thực
     async function setupFirebase() {
         if (!firebaseConfig || !firebaseConfig.apiKey) {
             console.warn("Cảnh báo: Firebase Config không hợp lệ hoặc thiếu.");
@@ -584,11 +570,9 @@
             }
         } catch (error) {
             console.error("Lỗi xác thực Firebase:", error);
-            // Tiếp tục với tài khoản ẩn danh nếu Custom Token thất bại
             await signInAnonymously(auth);
         }
 
-        // Lắng nghe thay đổi trạng thái xác thực để lấy userId và tải dữ liệu
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 userId = user.uid;
@@ -599,65 +583,49 @@
         });
     }
 
-    // Hàm xử lý sự kiện input và gọi saveSettings
-    function handleInput(inputId) {
-        // Gọi tính toán trước
+    // --- GLOBAL FUNCTIONS (Attached to window) ---
+
+    window.handleInput = function(inputId) {
         const activeTab = document.querySelector('.tab-button.active').id;
         if (activeTab === 'rankTabBtn') {
             window.calculate();
         } else {
             window.calculateMasteryAndBossTime();
         }
-        
-        // Sau đó lưu cài đặt
-        saveSettings();
-    }
-    // Gán hàm vào window để HTML có thể truy cập
-    window.handleInput = handleInput;
+        saveSettings(); 
+    };
 
-
-    // --- 5. UI CONTROL LOGIC ---
-
-    // Hàm đồng bộ Rank mục tiêu (chỉ chạy khi ở tab Rank)
-    function syncTargetRank() {
+    window.syncTargetRank = function() {
         const currentRankEl = document.getElementById('currentRank');
         const targetRankEl = document.getElementById('targetRank');
         
-        const currentRank = parseInt(currentRankEl.value);
+        // Lấy giá trị và đảm bảo nằm trong khoảng 0-100
+        let currentRank = parseInt(currentRankEl.value) || 0;
+        if (currentRank < 0) currentRank = 0;
+        if (currentRank > 99) currentRank = 99;
+        currentRankEl.value = currentRank; // Cập nhật lại nếu người dùng nhập sai
+
         let newTargetRank = currentRank + 1;
-        
-        if (newTargetRank > 100) {
-            newTargetRank = 100;
-        }
+        if (newTargetRank > 100) newTargetRank = 100;
 
         targetRankEl.value = newTargetRank;
         window.calculate();
         saveSettings();
-    }
-    // Gán hàm vào window
-    window.syncTargetRank = syncTargetRank;
+    };
 
-
-    // Hàm chuyển đổi giữa các tab
-    function showSection(sectionId, shouldSave = true) {
+    window.showSection = function(sectionId, shouldSave = true) {
         const isRank = sectionId === 'rank';
         
-        // Cập nhật buttons
         document.getElementById('rankTabBtn').classList.toggle('active', isRank);
         document.getElementById('masteryTabBtn').classList.toggle('active', !isRank);
 
-        // Cập nhật input sections (Ẩn/hiện trường nhập DAMAGE)
         document.getElementById('rankInputs').style.display = isRank ? 'block' : 'none';
         document.getElementById('masteryInputs').style.display = isRank ? 'none' : 'block';
-
-        // Cập nhật trường Mastery/Click (luôn hiện, nhưng nhãn có thể thay đổi)
         document.getElementById('masteryClickInput').style.display = 'block';
 
-        // Cập nhật output sections
         document.getElementById('rankOutput').style.display = isRank ? 'block' : 'none';
         document.getElementById('masteryOutput').style.display = isRank ? 'none' : 'block';
         
-        // Kích hoạt tính toán khi chuyển tab
         if (isRank) {
             window.calculate();
         } else {
@@ -667,31 +635,17 @@
         if (shouldSave) {
             saveSettings();
         }
-    }
-    // Gán hàm vào window
-    window.showSection = showSection;
+    };
 
-
-    // Hàm khởi tạo Dropdown và các giá trị mặc định
     function initUI() {
         buildRankCosts();
-
-        const rankSelects = ['currentRank', 'targetRank'];
-        rankSelects.forEach(id => {
-            const el = document.getElementById(id);
-            for (let i = 0; i <= 100; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.text = `Rank ${i}`;
-                if (id === 'currentRank' && i === 0) option.selected = true; 
-                if (id === 'targetRank' && i === 1) option.selected = true; 
-                el.appendChild(option);
-            }
-        });
         
-        const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit']; // Thêm damageUnit
+        // Khởi tạo options cho các ô chọn đơn vị
+        const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit'];
         unitSelects.forEach(id => {
             const el = document.getElementById(id);
+            // Xóa options cũ nếu có để tránh duplicate khi reload
+            el.innerHTML = '';
             UNITS.forEach((u, index) => {
                 const option = document.createElement('option');
                 option.value = index;
@@ -702,13 +656,20 @@
         });
     }
 
-    // --- 6. CALCULATION FUNCTIONS ---
+    window.calculate = function() {
+        const currentRankEl = document.getElementById('currentRank');
+        const targetRankEl = document.getElementById('targetRank');
 
-    // Main calculation function (Tính Chi phí & Thời gian Rank)
-    function calculate() {
-        const startRank = parseInt(document.getElementById('currentRank').value);
-        const endRank = parseInt(document.getElementById('targetRank').value);
-        const clickValRaw = getRawMasteryClickValue(); // Dùng Mastery Click Value cho Rank
+        let startRank = parseInt(currentRankEl.value) || 0;
+        let endRank = parseInt(targetRankEl.value) || 1;
+
+        // Validate Range
+        if (startRank < 0) startRank = 0;
+        if (startRank > 100) startRank = 100;
+        if (endRank < 1) endRank = 1;
+        if (endRank > 100) endRank = 100;
+
+        const clickValRaw = getRawMasteryClickValue(); 
 
         const costDisplayEl = document.getElementById('totalCostDisplay');
         const dpsAutoDisplayEl = document.getElementById('dpsAutoDisplay');
@@ -726,94 +687,56 @@
         }
 
         let totalCost = 0;
-
-        // 1. Calculate Total Cost
         for (let i = startRank; i < endRank; i++) {
-            if (RANK_COSTS[i]) {
-                totalCost += RANK_COSTS[i];
-            } else {
-                costDisplayEl.innerText = "Lỗi: Dữ liệu Rank không đủ";
-                timeAutoDisplayEl.innerText = "---";
-                timeNorDisplayEl.innerText = "---";
-                return;
-            }
+            if (RANK_COSTS[i]) totalCost += RANK_COSTS[i];
         }
 
-        // 2. Calculate Damage per second and Time for AUTO (6.7 CPS)
         const dpsAutoRaw = clickValRaw * CPS_AUTO;
         let timeAutoSeconds = 0;
-        if (dpsAutoRaw > 0) {
-            timeAutoSeconds = totalCost / dpsAutoRaw;
-        }
+        if (dpsAutoRaw > 0) timeAutoSeconds = totalCost / dpsAutoRaw;
 
-        // 3. Calculate Damage per second and Time for NOR (5.0 CPS)
         const dpsNorRaw = clickValRaw * CPS_NOR;
         let timeNorSeconds = 0;
-        if (dpsNorRaw > 0) {
-            timeNorSeconds = totalCost / dpsNorRaw;
-        }
+        if (dpsNorRaw > 0) timeNorSeconds = totalCost / dpsNorRaw;
 
-        // Update UI
         costDisplayEl.innerText = formatNumber(totalCost);
         
-        // Update AUTO 6.7x
         dpsAutoDisplayEl.innerText = formatNumber(dpsAutoRaw) + '/s';
         timeAutoDisplayEl.innerText = dpsAutoRaw > 0 ? formatTimeDisplay(timeAutoSeconds) : "Vô cực (Sát thương = 0)";
 
-        // Update NOR 5x
         dpsNorDisplayEl.innerText = formatNumber(dpsNorRaw) + '/s';
         timeNorDisplayEl.innerText = dpsNorRaw > 0 ? formatTimeDisplay(timeNorSeconds) : "Vô cực (Sát thương = 0)";
-    }
-    // Gán hàm vào window
-    window.calculate = calculate;
+    };
     
-    // NEW FUNCTION: Tính Mastery theo thời gian và Thời gian Hạ Boss
-    function calculateMasteryAndBossTime() {
-        const masteryClickValRaw = getRawMasteryClickValue(); // Dùng Mastery cho Mastery đạt được
-        const damageClickValRaw = getRawDamageClickValue(); // Dùng Damage cho Boss Time
+    window.calculateMasteryAndBossTime = function() {
+        const masteryClickValRaw = getRawMasteryClickValue();
+        const damageClickValRaw = getRawDamageClickValue();
         const bossHpRaw = getRawBossHpValue();
         
-        // 1. Calculate Damage per second (Dùng Damage Click Value)
-        const dpsAutoRaw = damageClickValRaw * CPS_AUTO;
-        const dpsNorRaw = damageClickValRaw * CPS_NOR;
+        const dpsAutoDamage = damageClickValRaw * CPS_AUTO;
+        const dpsNorDamage = damageClickValRaw * CPS_NOR;
 
-        // --- A. Tính Thời gian Hạ Boss ---
         let bossTimeAuto = 0;
-        if (dpsAutoRaw > 0) {
-            bossTimeAuto = bossHpRaw / dpsAutoRaw;
-        }
+        if (dpsAutoDamage > 0) bossTimeAuto = bossHpRaw / dpsAutoDamage;
         
         let bossTimeNor = 0;
-        if (dpsNorRaw > 0) {
-            bossTimeNor = bossHpRaw / dpsNorRaw;
-        }
+        if (dpsNorDamage > 0) bossTimeNor = bossHpRaw / dpsNorDamage;
         
-        // Cập nhật kết quả Boss
-        document.getElementById('bossTimeAuto').innerText = dpsAutoRaw > 0 ? formatTimeDisplay(bossTimeAuto) : "Vô cực (Sát thương = 0)";
-        document.getElementById('bossTimeNor').innerText = dpsNorRaw > 0 ? formatTimeDisplay(bossTimeNor) : "Vô cực (Sát thương = 0)";
+        document.getElementById('bossTimeAuto').innerText = dpsAutoDamage > 0 ? formatTimeDisplay(bossTimeAuto) : "Vô cực (Sát thương = 0)";
+        document.getElementById('bossTimeNor').innerText = dpsNorDamage > 0 ? formatTimeDisplay(bossTimeNor) : "Vô cực (Sát thương = 0)";
 
-
-        // --- B. Tính Mastery đạt được theo thời gian ---
-        // Lấy tổng thời gian (giây) từ input
         const hours = parseFloat(document.getElementById('timeHours').value) || 0;
         const minutes = parseFloat(document.getElementById('timeMinutes').value) || 0;
         const seconds = parseFloat(document.getElementById('timeSeconds').value) || 0;
-        
         const totalTimeSeconds = (hours * 3600) + (minutes * 60) + seconds;
         
-        // Tính Mastery đạt được (Dùng Mastery Click Value)
         const masteryAuto = masteryClickValRaw * CPS_AUTO * totalTimeSeconds;
         const masteryNor = masteryClickValRaw * CPS_NOR * totalTimeSeconds;
         
-        // Cập nhật kết quả Mastery
         document.getElementById('masteryByTimeAuto').innerText = formatNumber(masteryAuto);
         document.getElementById('masteryByTimeNor').innerText = formatNumber(masteryNor);
-    }
-    // Gán hàm vào window
-    window.calculateMasteryAndBossTime = calculateMasteryAndBossTime;
+    };
 
-
-    // Initial run
     window.onload = () => {
         initUI();
         setupFirebase();
