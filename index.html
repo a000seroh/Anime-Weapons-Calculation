@@ -3,745 +3,867 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Weapons Calculation</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>AW.Calc - Mastery & Damage</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
-            --card-bg: #111111;
-            --border-color: #333;
-            --accent-color: #4CAF50; /* Màu xanh lá cây */
-            --time-color: #2979ff; /* Màu xanh dương */
-            --text-main: #ffffff;
-            --text-muted: #888888;
+            --bg-app: #050505;
+            --bg-card: #0f0f0f;
+            --bg-input: #000000;
+            --border-color: #222;
+            --accent-primary: #2962ff; /* Xanh dương đậm */
+            --accent-glow: rgba(41, 98, 255, 0.15);
+            --accent-text: #448aff;
+            --text-primary: #ffffff;
+            --text-secondary: #666666;
+            --text-value: #e0e0e0;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
         }
+
+        * { box-sizing: border-box; outline: none; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            padding: 20px;
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column; 
+            align-items: center;    
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-        }
-        .note {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-
-        .card-grid {
+        .app-container {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 340px 1fr;
+            gap: 24px;
+            max-width: 1200px;
+            width: 100%;
+            flex: 1; 
+        }
+
+        /* --- CỘT TRÁI (ĐIỀU KHIỂN) --- */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
-        @media (max-width: 768px) {
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
+        .brand-header { margin-bottom: 10px; }
+        
+        .brand-title {
+            font-family: var(--font-mono);
+            font-size: 20px; 
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+        }
+        .brand-title span { color: var(--accent-primary); }
+        
+        .brand-subtitle {
+            font-size: 11px; 
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-weight: 500;
+            line-height: 1.4;
         }
 
-        .panel {
-            background-color: var(--card-bg);
+        .control-card {
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
-        .section-label {
+        /* Tabs Styling */
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #050505;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 10px;
+            font-family: var(--font-sans);
+            font-weight: 700;
             font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
             text-transform: uppercase;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        select, input[type="number"], input[type="text"] {
-            width: 100%;
-            background-color: #000;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            outline: none;
-            box-sizing: border-box;
-        }
-        
-        select {
-            cursor: pointer;
+        .nav-btn:hover { color: #fff; }
+
+        .nav-btn.active {
+            background-color: var(--accent-primary);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
 
-        /* --- TAB SYSTEM CSS --- */
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* Inputs Styling */
+        .control-section { margin-bottom: 20px; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .label-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-row {
+            display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            align-items: center;
         }
-        .tab-button {
-            padding: 10px;
+
+        .input-wrapper {
+            background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            padding: 0 12px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-wrapper:focus-within { 
+            border-color: var(--accent-primary); 
+            box-shadow: 0 0 0 1px var(--accent-glow);
+        }
+
+        input, select {
             background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .tab-button.active {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--text-main);
-        }
-
-        /* OUTPUT PANEL */
-        .output-box h2 {
-            color: var(--time-color); 
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .output-stats div {
-            padding: 15px 0;
-            border-bottom: 1px dashed #222;
+            border: none;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            width: 100%;
+            height: 100%;
         }
         
-        /* CSS cho mục mới (Mastery theo thời gian) */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        select {
+            color: var(--accent-text);
+            font-weight: 700;
+            text-align: right;
+            cursor: pointer;
+            min-width: 60px;
+        }
+        select option { background-color: #000; color: #fff; }
+
         .time-input-group {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .time-input-group label {
+        /* --- CỘT PHẢI (HIỂN THỊ) --- */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Big Timer Card */
+        .timer-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
             text-align: center;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            display: block;
+            position: relative;
+            overflow: hidden;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         
-        /* Thẻ kết quả mới */
-        .result-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px; 
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(41,98,255,0.08) 0%, rgba(0,0,0,0) 60%);
+            pointer-events: none;
         }
 
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 24px;
+        .timer-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 12px;
             font-weight: 700;
+            z-index: 1;
+        }
+
+        .big-time {
+            font-family: var(--font-mono);
+            font-size: 64px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(41, 98, 255, 0.2);
+            line-height: 1.1;
+            margin-bottom: 12px;
+            z-index: 1;
+        }
+        
+        .time-unit { font-size: 0.5em; color: var(--text-secondary); font-weight: 400; margin-right: 6px;}
+
+        .sub-info {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            padding: 6px 12px;
+            border-radius: 20px;
+            z-index: 1;
+        }
+        .highlight { color: var(--accent-text); font-weight: bold; margin-left: 5px; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        /* STAT CARD DESIGN */
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 150px;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            border-color: #333;
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+        
+        .stat-icon {
+            font-size: 18px;
+            color: #fff; 
+            opacity: 0.7;
+        }
+
+        /* Combined Row Style */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .stat-row:last-child { margin-bottom: 0; }
+
+        .stat-col-val {
+            text-align: left;
+        }
+        .stat-value-sm {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
             line-height: 1.2;
         }
-
-        .stat-value.time {
-            color: var(--time-color);
-            font-size: 18px; 
+        .stat-label-sm {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
         }
         
-        .stat-value.damage {
-            font-size: 22px;
+        /* Màu riêng cho Fast/Nor */
+        .accent-fast { color: var(--accent-text); }
+        .accent-nor { color: #aaa; }
+
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            word-break: break-all;
             margin-bottom: 8px;
-        }
-        
-        .result-item {
-            padding: 15px 0;
-            border-bottom: 1px dashed #222;
+            line-height: 1.1;
         }
 
-        .result-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        
-        /* Ẩn kết quả không liên quan đến tab */
-        #rankOutput, #masteryOutput {
-            display: none;
-        }
-        #rankOutput {
-            display: block; /* Mặc định hiển thị Rank */
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
         }
 
-        /* Custom scrollbar for select */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            padding-bottom: 20px;
+            font-weight: 500;
+            font-family: var(--font-mono);
         }
-        ::-webkit-scrollbar-track {
-            background: #000; 
+
+        @media (max-width: 850px) {
+            .app-container { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .big-time { font-size: 48px; }
         }
-        ::-webkit-scrollbar-thumb {
-            background: #333; 
-            border-radius: 4px;
-        }
+        
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>⚔️ Anime Weapons Calculation</h1>
-    <div class="note">Công cụ tính toán Sát thương, Mastery và Rank Progression.</div>
-
-    <div class="card-grid">
-        <!-- CỘT TRÁI: NHẬP LIỆU & TAB NAV -->
-        <div class="panel">
-            <h2>Thiết lập</h2>
-            
-            <div class="tab-buttons">
-                <button class="tab-button active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
-                <button class="tab-button" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss & Mastery</button>
+    <div class="app-container">
+        
+        <!-- === CỘT TRÁI: NHẬP LIỆU === -->
+        <div class="left-panel">
+            <div class="brand-header">
+                <h1 class="brand-title">⚔️ Anime Weapons <span>Calculation</span></h1>
+                <div class="brand-subtitle">Công cụ tính toán Sát thương, Mastery và Rank</div>
             </div>
 
-            <!-- CHUNG: POWER INPUT (MASTERTY/CLICK - VẪN CẦN CHO CẢ HAI) -->
-            <div id="masteryClickInput">
-                <div class="section-label">Giá trị 1 Click (Mastery)</div>
-                <div class="input-group" style="display:flex; gap:10px;">
-                    <input type="number" id="clickVal" value="0" oninput="window.handleInput('clickVal')" style="flex:2;">
-                    <select id="clickUnit" onchange="window.handleInput('clickUnit')" style="flex:1;">
-                        <!-- JS will populate units -->
-                    </select>
-                </div>
-            </div>
-            
-            <!-- SECTION 1: RANK TRACKER INPUTS -->
-            <div id="rankInputs">
-                <div class="section-label">Rank hiện tại (0-100)</div>
-                <div class="input-group">
-                    <!-- ĐÃ ĐỔI SANG INPUT NUMBER -->
-                    <input type="number" id="currentRank" min="0" max="100" value="0" oninput="window.syncTargetRank()">
+            <div class="control-card">
+                <!-- TABS -->
+                <div class="nav-tabs">
+                    <button class="nav-btn active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
+                    <button class="nav-btn" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss & Mastery</button>
                 </div>
 
-                <div class="section-label">Rank mục tiêu (1-100)</div>
-                <div class="input-group">
-                    <!-- ĐÃ ĐỔI SANG INPUT NUMBER -->
-                    <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
-                </div>
-            </div>
-
-            <!-- SECTION 2: BOSS & MASTERY INPUTS (CHỈ HIỆN KHI Ở TAB BOSS) -->
-            <div id="masteryInputs" style="display:none;">
-                
-                <div class="section-label">Giá trị 1 Click (Sát thương)</div>
-                <div class="input-group" style="display:flex; gap:10px;">
-                    <input type="number" id="damageVal" value="0" oninput="window.handleInput('damageVal')" style="flex:2;">
-                    <select id="damageUnit" onchange="window.handleInput('damageUnit')" style="flex:1;">
-                        <!-- JS will populate units -->
-                    </select>
-                </div>
-
-                <div class="section-label">Máu Boss (HP) cần đánh</div>
-                <div class="input-group" style="display:flex; gap:10px;">
-                    <input type="number" id="bossHpVal" value="0" oninput="window.handleInput('bossHpVal')" style="flex:2;">
-                    <select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')" style="flex:1;">
-                        <!-- JS will populate units -->
-                    </select>
-                </div>
-
-                <div class="section-label">Thời gian muốn cày Mastery</div>
-                <div class="time-input-group">
-                    <div>
-                        <label for="timeHours">Giờ</label>
-                        <input type="number" id="timeHours" value="0" min="0" oninput="window.handleInput('timeHours')">
-                    </div>
-                    <div>
-                        <label for="timeMinutes">Phút</label>
-                        <input type="number" id="timeMinutes" value="0" min="0" max="59" oninput="window.handleInput('timeMinutes')">
-                    </div>
-                    <div>
-                        <label for="timeSeconds">Giây</label>
-                        <input type="number" id="timeSeconds" value="0" min="0" max="59" oninput="window.handleInput('timeSeconds')">
+                <!-- 1. RANK INPUTS -->
+                <div id="rankInputs">
+                    <div class="control-section">
+                        <div class="section-header">
+                            <span class="label-text">RANK (0-100)</span>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-wrapper" style="flex:1;">
+                                <span style="color:#666; margin-right:5px;">Hiện tại</span>
+                                <input type="number" id="currentRank" min="0" max="100" value="0" oninput="window.syncTargetRank()">
+                            </div>
+                            <div class="input-wrapper" style="flex:1;">
+                                <span style="color:#666; margin-right:5px;">Mục tiêu</span>
+                                <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+                <!-- 2. BOSS INPUTS (Ẩn mặc định) -->
+                <div id="masteryInputs" class="hidden">
+                    <!-- BOSS HP -->
+                    <div class="control-section">
+                        <div class="section-header"><span class="label-text">MÁU BOSS (HP)</span></div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="number" id="bossHpVal" placeholder="0" oninput="window.handleInput('bossHpVal')">
+                                <select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')"></select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CLICK DAMAGE -->
+                    <div class="control-section">
+                        <div class="section-header"><span class="label-text">SÁT THƯƠNG CLICK (DAMAGE)</span></div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="number" id="damageVal" placeholder="0" oninput="window.handleInput('damageVal')">
+                                <select id="damageUnit" onchange="window.handleInput('damageUnit')"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TIME -->
+                    <div class="control-section">
+                        <div class="section-header"><span class="label-text">THỜI GIAN CÀY MASTERY</span></div>
+                        <div class="time-input-group">
+                            <div class="input-wrapper"><input type="number" id="timeHours" placeholder="Giờ" oninput="window.handleInput('timeHours')"></div>
+                            <div class="input-wrapper"><input type="number" id="timeMinutes" placeholder="Phút" oninput="window.handleInput('timeMinutes')"></div>
+                            <div class="input-wrapper"><input type="number" id="timeSeconds" placeholder="Giây" oninput="window.handleInput('timeSeconds')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. COMMON INPUT: MASTERY PER CLICK -->
+                <div class="control-section" id="masteryClickInput">
+                    <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
+                    <div class="input-row">
+                        <div class="input-wrapper">
+                            <input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')">
+                            <select id="clickUnit" onchange="window.handleInput('clickUnit')"></select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <!-- CỘT PHẢI: KẾT QUẢ - ĐƯỢC ẨN/HIỆN THEO TAB -->
-        <div>
-            <!-- KẾT QUẢ RANK -->
+        <!-- === CỘT PHẢI: HIỂN THỊ KẾT QUẢ === -->
+        <div class="right-panel">
+            
+            <!-- KẾT QUẢ: RANK TAB -->
             <div id="rankOutput">
-                <div class="result-card output-box">
-                    <h2>Kết quả Rank</h2>
-                    <div id="rankOutputStats" class="output-stats">
+                <!-- 1. BIG TIMER -->
+                <div class="timer-card">
+                    <div class="timer-label">THỜI GIAN CÀY RANK (FAST 6.7X)</div>
+                    <div class="big-time" id="mainTimerDisplay">0<span class="time-unit">s</span></div>
+                    <div class="sub-info">
+                        Nor (5x): <span class="highlight" id="subTimerDisplay">0s</span>
+                    </div>
+                </div>
+
+                <!-- 2. STATS (GỘP FAST & NOR) -->
+                <div class="stats-grid">
+                    <!-- Total Cost -->
+                    <div class="stat-card" style="justify-content: center;">
+                        <div class="stat-header" style="border:none; margin-bottom:5px;">
+                            <div class="stat-title">TỔNG MASTERY CẦN</div>
+                            <div class="stat-icon">⚔️</div>
+                        </div>
+                        <div class="stat-value" style="font-size: 36px;" id="totalCostDisplay">0</div>
+                        <div class="stat-sub">Từ Rank <span id="rankRange">0 → 1</span></div>
+                    </div>
+
+                    <!-- Combined Speed Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">TỐC ĐỘ MASTERY</div>
+                            <div class="stat-icon">✨</div>
+                        </div>
                         
-                        <!-- Tổng Chi phí -->
-                        <div>
-                            <div class="stat-label">⚔️ Tổng Mastery cần cày</div>
-                            <div class="stat-value" id="totalCostDisplay">---</div>
+                        <!-- Fast Row -->
+                        <div class="stat-row">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-fast" id="dpsDisplay">0</div>
+                                <div class="stat-label-sm">Fast (6.7x)</div>
+                            </div>
                         </div>
-
-                        <!-- Tốc độ cày & Thời gian (Auto 6.7x) -->
-                        <div>
-                            <div class="stat-label">✨ Mastery nhận được 1s Fast (6.7x)</div>
-                            <div class="stat-value damage" id="dpsAutoDisplay">---</div>
-                            <div class="stat-label">⏱️ Thời gian cày (6.7x)</div>
-                            <div class="stat-value time" id="timeAutoDisplay">---</div>
-                        </div>
-
-                        <!-- Tốc độ cày & Thời gian (Nor 5x) -->
-                        <div>
-                            <div class="stat-label">✨ Mastery nhận được 1s Nor (5x)</div>
-                            <div class="stat-value damage" id="dpsNorDisplay">---</div>
-                            <div class="stat-label">⏱️ Thời gian cày (5x)</div>
-                            <div class="stat-value time" id="timeNorDisplay">---</div>
+                        
+                        <!-- Nor Row -->
+                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-nor" id="dpsNorDisplay">0</div>
+                                <div class="stat-label-sm">Nor (5.0x)</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- KẾT QUẢ BOSS & MASTERY -->
-            <div id="masteryOutput" style="display:none;">
-                
-                <!-- CARD 1: KẾT QUẢ BOSS TIME -->
-                <div class="result-card">
-                    <h2>Thời gian Hạ Boss</h2>
-                    <div class="output-stats">
-                        <div class="result-item">
-                            <div class="stat-label">⏱️ Thời gian Hạ Boss - Auto (6.7x)</div>
-                            <div class="stat-value time" id="bossTimeAuto">---</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="stat-label">⏱️ Thời gian Hạ Boss - Nor (5x)</div>
-                            <div class="stat-value time" id="bossTimeNor">---</div>
-                        </div>
+            <!-- KẾT QUẢ: BOSS & MASTERY TAB -->
+            <div id="masteryOutput" class="hidden">
+                <!-- 1. BIG TIMER (BOSS) -->
+                <div class="timer-card">
+                    <div class="timer-label">THỜI GIAN HẠ BOSS (FAST 6.7X)</div>
+                    <div class="big-time" id="bossTimerAuto">0<span class="time-unit">s</span></div>
+                    <div class="sub-info">
+                        Nor (5x): <span class="highlight" id="bossTimerNor">0s</span>
                     </div>
                 </div>
 
-                <!-- CARD 2: KẾT QUẢ MASTERY -->
-                <div class="result-card">
-                    <h2>Mastery Đạt được</h2>
-                    <div class="output-stats">
-                        <div class="result-item">
-                            <div class="stat-label">Mastery đạt được (Auto 6.7x)</div>
-                            <div class="stat-value" id="masteryByTimeAuto">---</div>
+                <!-- 2. STATS GRID -->
+                <div class="stats-grid">
+                    
+                    <!-- Info Group (HP + DMG) -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">THÔNG TIN BOSS</div>
+                            <div class="stat-icon">🩸</div>
                         </div>
-                        <div class="result-item">
-                            <div class="stat-label">Mastery đạt được (Nor 5x)</div>
-                            <div class="stat-value" id="masteryByTimeNor">---</div>
+                        
+                        <!-- Boss HP -->
+                        <div class="stat-row">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm" id="bossHpDisplay">0</div>
+                                <div class="stat-label-sm">Mục tiêu Máu Boss</div>
+                            </div>
+                        </div>
+
+                        <!-- Damage -->
+                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
+                            <div class="stat-col-val">
+                                <div class="stat-title" style="margin-bottom: 5px; color: var(--text-secondary);">SÁT THƯƠNG MỖI GIÂY</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Damage Fast -->
+                        <div class="stat-row">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div>
+                                <div class="stat-label-sm">Fast (6.7x)</div>
+                            </div>
+                        </div>
+
+                        <!-- Damage Nor -->
+                        <div class="stat-row" style="border-top:1px dashed #333; padding-top:5px;">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-nor" id="damageDpsNorDisplay">0</div>
+                                <div class="stat-label-sm">Nor (5.0x)</div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Combined Mastery Gained Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">MASTERY ĐẠT ĐƯỢC</div>
+                            <div class="stat-icon">📦</div>
+                        </div>
+
+                        <!-- Fast Row -->
+                        <div class="stat-row">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-fast" id="masteryGainedDisplay">0</div>
+                                <div class="stat-label-sm">Fast (6.7x)</div>
+                            </div>
+                        </div>
+
+                        <!-- Nor Row -->
+                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
+                            <div class="stat-col-val">
+                                <div class="stat-value-sm accent-nor" id="masteryGainedNorDisplay">0</div>
+                                <div class="stat-label-sm">Nor (5.0x)</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <div class="footer">
+        Made with love by Gemini
+    </div>
 
-    // Global Firebase Variables (Provided by Canvas Environment)
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-    
-    let db;
-    let auth;
-    let userId = '';
-    const userSettingsPath = `artifacts/${appId}/users/`;
-    const settingsDocName = 'calculator_settings';
-    
-    // --- 1. CONFIGURATION ---
-    
-    const SCALING_FACTOR = 8.400;
-    const BASE_COST_MAGNITUDE = 30; 
-    const K_EXPONENT = 3; 
-    const CPS_AUTO = 6.7;
-    const CPS_NOR = 5.0; 
+    <!-- LOGIC SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const UNITS = [
-        { name: '', exp: 0 }, { name: 'K', exp: 3 }, { name: 'M', exp: 6 }, { name: 'B', exp: 9 }, { name: 'T', exp: 12 }, 
-        { name: 'Qa', exp: 15 }, { name: 'Qi', exp: 18 }, { name: 'Sx', exp: 21 }, { name: 'Sp', exp: 24 }, { name: 'Oc', exp: 27 }, 
-        { name: 'No', exp: 30 }, { name: 'Dc', exp: 33 }, 
-        { name: 'Ud', exp: 36 }, { name: 'Dd', exp: 39 }, 
-        { name: 'Td', exp: 42 }, { name: 'Qad', exp: 45 }, { name: 'Qid', exp: 48 }, { name: 'Sxd', exp: 51 }, { name: 'Spd', exp: 54 }, 
-        { name: 'Ocd', exp: 57 }, { name: 'Nod', exp: 60 }, { name: 'Dec', exp: 63 }, { name: 'Und', exp: 66 }, { name: 'Duo', exp: 69 },
-        { name: 'Tri', exp: 72 },
-        { name: 'Qua', exp: 75 }, { name: 'Qui', exp: 78 }, { name: 'Six', exp: 81 }, 
-        { name: 'Sep', exp: 84 }, { name: 'Oct', exp: 87 }, { name: 'Nuo', exp: 90 }
-    ];
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db, auth, userId = '';
+        const userSettingsPath = `artifacts/${appId}/users/`;
+        const settingsDocName = 'calculator_settings';
+        
+        // CONFIG
+        const SCALING_FACTOR = 8.400;
+        const BASE_COST_MAGNITUDE = 30; 
+        const K_EXPONENT = 3; 
+        const CPS_AUTO = 6.7;
+        const CPS_NOR = 5.0; 
 
-    const RANK_COSTS = {};
+        const UNITS = [
+            { name: '', exp: 0 }, { name: 'K', exp: 3 }, { name: 'M', exp: 6 }, { name: 'B', exp: 9 }, { name: 'T', exp: 12 }, 
+            { name: 'Qa', exp: 15 }, { name: 'Qi', exp: 18 }, { name: 'Sx', exp: 21 }, { name: 'Sp', exp: 24 }, { name: 'Oc', exp: 27 }, 
+            { name: 'No', exp: 30 }, { name: 'Dc', exp: 33 }, 
+            { name: 'Ud', exp: 36 }, { name: 'Dd', exp: 39 }, 
+            { name: 'Td', exp: 42 }, { name: 'Qad', exp: 45 }, { name: 'Qid', exp: 48 }, { name: 'Sxd', exp: 51 }, { name: 'Spd', exp: 54 }, 
+            { name: 'Ocd', exp: 57 }, { name: 'Nod', exp: 60 }, { name: 'Dec', exp: 63 }, { name: 'Und', exp: 66 }, { name: 'Duo', exp: 69 },
+            { name: 'Tri', exp: 72 }, { name: 'Qua', exp: 75 }, { name: 'Qui', exp: 78 }, { name: 'Six', exp: 81 }, 
+            { name: 'Sep', exp: 84 }, { name: 'Oct', exp: 87 }, { name: 'Nuo', exp: 90 }
+        ];
 
-    // --- 2. CORE UTILITY FUNCTIONS ---
-    
-    function formatNumber(rawVal) {
-        if (rawVal === 0) return "0";
-        if (rawVal < 0) return "Error";
+        const RANK_COSTS = {};
 
-        let unitIdx = 0;
-        for (let i = UNITS.length - 1; i >= 0; i--) {
-            if (rawVal >= Math.pow(10, UNITS[i].exp)) {
-                unitIdx = i;
-                break;
+        // --- UTILS ---
+        function formatNumber(rawVal) {
+            if (rawVal === 0) return "0";
+            if (rawVal < 0) return "Lỗi";
+            let unitIdx = 0;
+            for (let i = UNITS.length - 1; i >= 0; i--) {
+                if (rawVal >= Math.pow(10, UNITS[i].exp)) { unitIdx = i; break; }
+            }
+            const displayVal = rawVal / Math.pow(10, UNITS[unitIdx].exp);
+            const unitName = UNITS[unitIdx].name === '' ? '' : UNITS[unitIdx].name;
+            return `${displayVal.toFixed(2)}${unitName}`;
+        }
+
+        function formatBigTime(totalSeconds) {
+            if (!isFinite(totalSeconds) || totalSeconds <= 0) return `0<span class="time-unit">s</span>`;
+            
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+            
+            const sDisplay = totalSeconds < 60 ? totalSeconds.toFixed(2) : s;
+
+            let html = "";
+            if (h > 0) html += `${h}<span class="time-unit">h</span> `;
+            if (m > 0 || h > 0) html += `${m}<span class="time-unit">m</span> `;
+            html += `${sDisplay}<span class="time-unit">s</span>`;
+            return html;
+        }
+
+        function formatTextTime(totalSeconds) {
+            if (!isFinite(totalSeconds) || totalSeconds <= 0) return "0s";
+            if (totalSeconds < 60) return totalSeconds.toFixed(2) + "s";
+            
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            return (h > 0 ? `${h}h ` : "") + `${m}m`;
+        }
+
+        function getRawVal(idVal, idUnit) {
+            const val = parseFloat(document.getElementById(idVal).value) || 0;
+            const unitIdx = parseInt(document.getElementById(idUnit).value) || 0;
+            return val * Math.pow(10, UNITS[unitIdx].exp);
+        }
+
+        function buildRankCosts() {
+            let currentCost = BASE_COST_MAGNITUDE * Math.pow(10, K_EXPONENT); 
+            RANK_COSTS[0] = currentCost;
+            for (let i = 1; i <= 99; i++) {
+                currentCost *= SCALING_FACTOR;
+                RANK_COSTS[i] = currentCost;
             }
         }
-        
-        const displayVal = rawVal / Math.pow(10, UNITS[unitIdx].exp);
-        const unitName = UNITS[unitIdx].name === '' ? '' : UNITS[unitIdx].name;
-        return `${displayVal.toFixed(2)}${unitName ? ' ' + unitName : ''}`;
-    }
 
-    function formatTimeDisplay(totalSeconds) {
-        if (!isFinite(totalSeconds) || totalSeconds <= 0) return "0 Giây";
-
-        const SECONDS_PER_YEAR = 31536000;
-        const SECONDS_PER_MONTH = 2592000; 
-        const SECONDS_PER_DAY = 86400;
-        const SECONDS_PER_HOUR = 3600;
-        const SECONDS_PER_MINUTE = 60;
-        
-        let remainingSeconds = totalSeconds;
-        let timeParts = [];
-        
-        const years = Math.floor(remainingSeconds / SECONDS_PER_YEAR);
-        remainingSeconds %= SECONDS_PER_YEAR;
-        if (years > 0) timeParts.push(`${years} Năm`);
-
-        const months = Math.floor(remainingSeconds / SECONDS_PER_MONTH);
-        remainingSeconds %= SECONDS_PER_MONTH;
-        if (months > 0) timeParts.push(`${months} Tháng`);
-
-        const days = Math.floor(remainingSeconds / SECONDS_PER_DAY);
-        remainingSeconds %= SECONDS_PER_DAY;
-        if (days > 0) timeParts.push(`${days} Ngày`);
-
-        const hours = Math.floor(remainingSeconds / SECONDS_PER_HOUR);
-        remainingSeconds %= SECONDS_PER_HOUR;
-        if (hours > 0) timeParts.push(`${hours} Giờ`);
-
-        const minutes = Math.floor(remainingSeconds / SECONDS_PER_MINUTE);
-        remainingSeconds %= SECONDS_PER_MINUTE;
-        if (minutes > 0) timeParts.push(`${minutes} Phút`);
-        
-        const secondsDisplay = remainingSeconds.toFixed(2); 
-
-        if (timeParts.length > 0 || totalSeconds < 60) {
-             timeParts.push(`${secondsDisplay} Giây`);
-        } else {
-             timeParts.push(`${secondsDisplay} Giây`);
-        }
-        
-        if (timeParts.length > 5) timeParts = timeParts.slice(0, 5); 
-
-        return timeParts.join(' ');
-    }
-
-    function getRawMasteryClickValue() {
-        const val = parseFloat(document.getElementById('clickVal').value);
-        const unitIdx = parseInt(document.getElementById('clickUnit').value);
-        if (isNaN(val)) return 0;
-        return val * Math.pow(10, UNITS[unitIdx].exp);
-    }
-
-    function getRawDamageClickValue() {
-        const val = parseFloat(document.getElementById('damageVal').value);
-        const unitIdx = parseInt(document.getElementById('damageUnit').value);
-        if (isNaN(val)) return 0;
-        return val * Math.pow(10, UNITS[unitIdx].exp);
-    }
-
-    function getRawBossHpValue() {
-        const val = parseFloat(document.getElementById('bossHpVal').value);
-        const unitIdx = parseInt(document.getElementById('bossHpUnit').value);
-        if (isNaN(val)) return 0;
-        return val * Math.pow(10, UNITS[unitIdx].exp);
-    }
-
-    // --- 3. RANK COST CALCULATION ---
-
-    function buildRankCosts() {
-        let currentCost = BASE_COST_MAGNITUDE * Math.pow(10, K_EXPONENT); 
-        RANK_COSTS[0] = currentCost;
-        for (let i = 1; i <= 99; i++) {
-            currentCost *= SCALING_FACTOR;
-            RANK_COSTS[i] = currentCost;
-        }
-    }
-
-    // --- 4. FIREBASE AND PERSISTENCE ---
-
-    async function saveSettings() {
-        if (!userId || !db) return;
-
-        const settings = {
-            activeTab: document.querySelector('.tab-button.active').id,
-            clickVal: document.getElementById('clickVal').value,
-            clickUnit: document.getElementById('clickUnit').value,
-            damageVal: document.getElementById('damageVal').value,
-            damageUnit: document.getElementById('damageUnit').value,
-            currentRank: document.getElementById('currentRank').value,
-            targetRank: document.getElementById('targetRank').value,
-            bossHpVal: document.getElementById('bossHpVal').value,
-            bossHpUnit: document.getElementById('bossHpUnit').value,
-            timeHours: document.getElementById('timeHours').value,
-            timeMinutes: document.getElementById('timeMinutes').value,
-            timeSeconds: document.getElementById('timeSeconds').value,
-        };
-        
-        try {
-            await setDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName), settings);
-        } catch (error) {
-            console.error("Lỗi khi lưu cài đặt vào Firestore:", error);
-        }
-    }
-
-    async function loadSettings() {
-        if (!userId || !db) return;
-
-        try {
-            const docSnap = await getDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName));
-            if (docSnap.exists()) {
-                const settings = docSnap.data();
-                
-                // Cập nhật DOM
-                document.getElementById('clickVal').value = settings.clickVal || '0';
-                document.getElementById('clickUnit').value = settings.clickUnit || '1'; // K
-                document.getElementById('damageVal').value = settings.damageVal || '0';
-                document.getElementById('damageUnit').value = settings.damageUnit || '1'; // K
-                document.getElementById('currentRank').value = settings.currentRank || '0';
-                document.getElementById('targetRank').value = settings.targetRank || '1';
-                document.getElementById('bossHpVal').value = settings.bossHpVal || '0';
-                document.getElementById('bossHpUnit').value = settings.bossHpUnit || '1'; // K
-                document.getElementById('timeHours').value = settings.timeHours || '0';
-                document.getElementById('timeMinutes').value = settings.timeMinutes || '0';
-                document.getElementById('timeSeconds').value = settings.timeSeconds || '0';
-                
-                const activeTab = settings.activeTab === 'masteryTabBtn' ? 'mastery' : 'rank';
-                
-                setTimeout(() => {
-                    window.showSection(activeTab, false); 
-                    window.calculate();
-                    window.calculateMasteryAndBossTime();
-                }, 50);
-
-            } else {
-                window.handleInput();
-            }
-        } catch (error) {
-            console.error("Lỗi khi tải cài đặt từ Firestore:", error);
-            window.handleInput();
-        }
-    }
-
-    async function setupFirebase() {
-        if (!firebaseConfig || !firebaseConfig.apiKey) {
-            console.warn("Cảnh báo: Firebase Config không hợp lệ hoặc thiếu.");
-            return;
-        }
-
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-        
-        try {
-            if (initialAuthToken) {
-                await signInWithCustomToken(auth, initialAuthToken);
-            } else {
-                await signInAnonymously(auth);
-            }
-        } catch (error) {
-            console.error("Lỗi xác thực Firebase:", error);
-            await signInAnonymously(auth);
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                userId = user.uid;
-                loadSettings();
-            } else {
-                console.log("Người dùng chưa được xác thực.");
-            }
-        });
-    }
-
-    // --- GLOBAL FUNCTIONS (Attached to window) ---
-
-    window.handleInput = function(inputId) {
-        const activeTab = document.querySelector('.tab-button.active').id;
-        if (activeTab === 'rankTabBtn') {
-            window.calculate();
-        } else {
-            window.calculateMasteryAndBossTime();
-        }
-        saveSettings(); 
-    };
-
-    window.syncTargetRank = function() {
-        const currentRankEl = document.getElementById('currentRank');
-        const targetRankEl = document.getElementById('targetRank');
-        
-        // Lấy giá trị và đảm bảo nằm trong khoảng 0-100
-        let currentRank = parseInt(currentRankEl.value) || 0;
-        if (currentRank < 0) currentRank = 0;
-        if (currentRank > 99) currentRank = 99;
-        currentRankEl.value = currentRank; // Cập nhật lại nếu người dùng nhập sai
-
-        let newTargetRank = currentRank + 1;
-        if (newTargetRank > 100) newTargetRank = 100;
-
-        targetRankEl.value = newTargetRank;
-        window.calculate();
-        saveSettings();
-    };
-
-    window.showSection = function(sectionId, shouldSave = true) {
-        const isRank = sectionId === 'rank';
-        
-        document.getElementById('rankTabBtn').classList.toggle('active', isRank);
-        document.getElementById('masteryTabBtn').classList.toggle('active', !isRank);
-
-        document.getElementById('rankInputs').style.display = isRank ? 'block' : 'none';
-        document.getElementById('masteryInputs').style.display = isRank ? 'none' : 'block';
-        document.getElementById('masteryClickInput').style.display = 'block';
-
-        document.getElementById('rankOutput').style.display = isRank ? 'block' : 'none';
-        document.getElementById('masteryOutput').style.display = isRank ? 'none' : 'block';
-        
-        if (isRank) {
-            window.calculate();
-        } else {
-            window.calculateMasteryAndBossTime();
-        }
-
-        if (shouldSave) {
+        // --- MAIN LOGIC ---
+        window.handleInput = function(source) {
+            const activeTab = document.getElementById('rankTabBtn').classList.contains('active') ? 'rank' : 'mastery';
+            if (activeTab === 'rank') window.calculateRank();
+            else window.calculateBoss();
             saveSettings();
-        }
-    };
+        };
 
-    function initUI() {
-        buildRankCosts();
-        
-        // Khởi tạo options cho các ô chọn đơn vị
-        const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit'];
-        unitSelects.forEach(id => {
-            const el = document.getElementById(id);
-            // Xóa options cũ nếu có để tránh duplicate khi reload
-            el.innerHTML = '';
-            UNITS.forEach((u, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.text = u.name === '' ? '(None)' : u.name;
-                if(u.name === 'K') option.selected = true; 
-                el.appendChild(option);
+        window.syncTargetRank = function() {
+            let cr = parseInt(document.getElementById('currentRank').value) || 0;
+            if(cr < 0) cr = 0; if(cr > 99) cr = 99;
+            document.getElementById('currentRank').value = cr;
+            
+            let tr = cr + 1;
+            if (tr > 100) tr = 100;
+            document.getElementById('targetRank').value = tr;
+            
+            window.calculateRank();
+            saveSettings();
+        };
+
+        window.showSection = function(sectionId, shouldSave = true) {
+            const isRank = sectionId === 'rank';
+            document.getElementById('rankTabBtn').classList.toggle('active', isRank);
+            document.getElementById('masteryTabBtn').classList.toggle('active', !isRank);
+            
+            document.getElementById('rankInputs').classList.toggle('hidden', !isRank);
+            document.getElementById('masteryInputs').classList.toggle('hidden', isRank);
+            
+            document.getElementById('rankOutput').classList.toggle('hidden', !isRank);
+            document.getElementById('masteryOutput').classList.toggle('hidden', isRank);
+            
+            if(isRank) window.calculateRank();
+            else window.calculateBoss();
+            
+            if(shouldSave) saveSettings();
+        };
+
+        // --- CALC 1: RANK ---
+        window.calculateRank = function() {
+            const startRank = parseInt(document.getElementById('currentRank').value) || 0;
+            const endRank = parseInt(document.getElementById('targetRank').value) || 1;
+            const clickVal = getRawVal('clickVal', 'clickUnit');
+
+            document.getElementById('rankRange').innerText = `${startRank} → ${endRank}`;
+
+            if (startRank >= endRank) {
+                document.getElementById('totalCostDisplay').innerText = "---";
+                document.getElementById('mainTimerDisplay').innerHTML = "Hoàn thành";
+                return;
+            }
+
+            let totalCost = 0;
+            for (let i = startRank; i < endRank; i++) {
+                if (RANK_COSTS[i]) totalCost += RANK_COSTS[i];
+            }
+            
+            document.getElementById('totalCostDisplay').innerText = formatNumber(totalCost);
+
+            const dpsAuto = clickVal * CPS_AUTO;
+            const dpsNor = clickVal * CPS_NOR;
+
+            // Cập nhật Fast & Nor (đã bỏ /s)
+            document.getElementById('dpsDisplay').innerText = formatNumber(dpsAuto);
+            document.getElementById('dpsNorDisplay').innerText = formatNumber(dpsNor);
+            
+            const timeAuto = dpsAuto > 0 ? totalCost / dpsAuto : 0;
+            const timeNor = dpsNor > 0 ? totalCost / dpsNor : 0;
+
+            document.getElementById('mainTimerDisplay').innerHTML = formatBigTime(timeAuto);
+            document.getElementById('subTimerDisplay').innerText = formatTextTime(timeNor);
+        };
+
+        // --- CALC 2: BOSS & MASTERY ---
+        window.calculateBoss = function() {
+            const bossHp = getRawVal('bossHpVal', 'bossHpUnit');
+            const damage = getRawVal('damageVal', 'damageUnit'); 
+            const mastery = getRawVal('clickVal', 'clickUnit'); 
+
+            // 1. BOSS TIME
+            const dpsDamageAuto = damage * CPS_AUTO;
+            const dpsDamageNor = damage * CPS_NOR;
+            
+            const timeBossAuto = dpsDamageAuto > 0 ? bossHp / dpsDamageAuto : 0;
+            const timeBossNor = dpsDamageNor > 0 ? bossHp / dpsDamageNor : 0;
+
+            document.getElementById('bossTimerAuto').innerHTML = formatBigTime(timeBossAuto);
+            document.getElementById('bossTimerNor').innerText = formatTextTime(timeBossNor);
+            document.getElementById('bossHpDisplay').innerText = formatNumber(bossHp);
+            
+            // Update Damage DPS (Fast & Nor)
+            document.getElementById('damageDpsDisplay').innerText = formatNumber(dpsDamageAuto);
+            document.getElementById('damageDpsNorDisplay').innerText = formatNumber(dpsDamageNor);
+
+            // 2. MASTERY GAINED
+            const h = parseFloat(document.getElementById('timeHours').value) || 0;
+            const m = parseFloat(document.getElementById('timeMinutes').value) || 0;
+            const s = parseFloat(document.getElementById('timeSeconds').value) || 0;
+            const totalSeconds = (h*3600) + (m*60) + s;
+
+            const gainedAuto = mastery * CPS_AUTO * totalSeconds;
+            const gainedNor = mastery * CPS_NOR * totalSeconds;
+            
+            document.getElementById('masteryGainedDisplay').innerText = formatNumber(gainedAuto);
+            document.getElementById('masteryGainedNorDisplay').innerText = formatNumber(gainedNor);
+        };
+
+        // --- INITIALIZATION & FIREBASE ---
+        function initUI() {
+            buildRankCosts();
+            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit'];
+            unitSelects.forEach(id => {
+                const el = document.getElementById(id);
+                el.innerHTML = '';
+                UNITS.forEach((u, index) => {
+                    const opt = document.createElement('option');
+                    opt.value = index;
+                    opt.text = u.name || '';
+                    if(u.name === 'K') opt.selected = true;
+                    el.appendChild(opt);
+                });
             });
-        });
-    }
-
-    window.calculate = function() {
-        const currentRankEl = document.getElementById('currentRank');
-        const targetRankEl = document.getElementById('targetRank');
-
-        let startRank = parseInt(currentRankEl.value) || 0;
-        let endRank = parseInt(targetRankEl.value) || 1;
-
-        // Validate Range
-        if (startRank < 0) startRank = 0;
-        if (startRank > 100) startRank = 100;
-        if (endRank < 1) endRank = 1;
-        if (endRank > 100) endRank = 100;
-
-        const clickValRaw = getRawMasteryClickValue(); 
-
-        const costDisplayEl = document.getElementById('totalCostDisplay');
-        const dpsAutoDisplayEl = document.getElementById('dpsAutoDisplay');
-        const timeAutoDisplayEl = document.getElementById('timeAutoDisplay');
-        const dpsNorDisplayEl = document.getElementById('dpsNorDisplay');
-        const timeNorDisplayEl = document.getElementById('timeNorDisplay');
-        
-        if (startRank >= endRank) {
-            costDisplayEl.innerText = "Rank mục tiêu phải cao hơn";
-            dpsAutoDisplayEl.innerText = "---";
-            timeAutoDisplayEl.innerText = "0 Giây";
-            dpsNorDisplayEl.innerText = "---";
-            timeNorDisplayEl.innerText = "0 Giây";
-            return;
         }
 
-        let totalCost = 0;
-        for (let i = startRank; i < endRank; i++) {
-            if (RANK_COSTS[i]) totalCost += RANK_COSTS[i];
+        async function saveSettings() {
+            if (!userId || !db) return;
+            const settings = {
+                activeTab: document.getElementById('rankTabBtn').classList.contains('active') ? 'rank' : 'mastery',
+                clickVal: document.getElementById('clickVal').value,
+                clickUnit: document.getElementById('clickUnit').value,
+                damageVal: document.getElementById('damageVal').value,
+                damageUnit: document.getElementById('damageUnit').value,
+                currentRank: document.getElementById('currentRank').value,
+                targetRank: document.getElementById('targetRank').value,
+                bossHpVal: document.getElementById('bossHpVal').value,
+                bossHpUnit: document.getElementById('bossHpUnit').value,
+                timeHours: document.getElementById('timeHours').value,
+                timeMinutes: document.getElementById('timeMinutes').value,
+                timeSeconds: document.getElementById('timeSeconds').value,
+            };
+            try { await setDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName), settings); } 
+            catch (e) { console.error(e); }
         }
 
-        const dpsAutoRaw = clickValRaw * CPS_AUTO;
-        let timeAutoSeconds = 0;
-        if (dpsAutoRaw > 0) timeAutoSeconds = totalCost / dpsAutoRaw;
+        async function loadSettings() {
+            if (!userId || !db) return;
+            try {
+                const snap = await getDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName));
+                if (snap.exists()) {
+                    const s = snap.data();
+                    document.getElementById('clickVal').value = s.clickVal || '0';
+                    document.getElementById('clickUnit').value = s.clickUnit || '1';
+                    document.getElementById('damageVal').value = s.damageVal || '0';
+                    document.getElementById('damageUnit').value = s.damageUnit || '1';
+                    document.getElementById('currentRank').value = s.currentRank || '0';
+                    document.getElementById('targetRank').value = s.targetRank || '1';
+                    document.getElementById('bossHpVal').value = s.bossHpVal || '0';
+                    document.getElementById('bossHpUnit').value = s.bossHpUnit || '1';
+                    document.getElementById('timeHours').value = s.timeHours || '0';
+                    document.getElementById('timeMinutes').value = s.timeMinutes || '0';
+                    document.getElementById('timeSeconds').value = s.timeSeconds || '0';
+                    
+                    const tab = s.activeTab || 'rank';
+                    setTimeout(() => { window.showSection(tab, false); }, 50);
+                } else { window.handleInput(); }
+            } catch (e) { window.handleInput(); }
+        }
 
-        const dpsNorRaw = clickValRaw * CPS_NOR;
-        let timeNorSeconds = 0;
-        if (dpsNorRaw > 0) timeNorSeconds = totalCost / dpsNorRaw;
+        async function setupFirebase() {
+            if (!firebaseConfig?.apiKey) return;
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            try {
+                if (initialAuthToken) await signInWithCustomToken(auth, initialAuthToken);
+                else await signInAnonymously(auth);
+            } catch { await signInAnonymously(auth); }
+            onAuthStateChanged(auth, (u) => { if(u) { userId = u.uid; loadSettings(); } });
+        }
 
-        costDisplayEl.innerText = formatNumber(totalCost);
-        
-        dpsAutoDisplayEl.innerText = formatNumber(dpsAutoRaw) + '/s';
-        timeAutoDisplayEl.innerText = dpsAutoRaw > 0 ? formatTimeDisplay(timeAutoSeconds) : "Vô cực (Sát thương = 0)";
+        // Expose key functions to window for HTML event handlers
+        window.handleInput = handleInput;
+        window.syncTargetRank = syncTargetRank;
+        window.showSection = showSection;
+        window.calculateRank = calculateRank;
+        window.calculateBoss = calculateBoss;
 
-        dpsNorDisplayEl.innerText = formatNumber(dpsNorRaw) + '/s';
-        timeNorDisplayEl.innerText = dpsNorRaw > 0 ? formatTimeDisplay(timeNorSeconds) : "Vô cực (Sát thương = 0)";
-    };
-    
-    window.calculateMasteryAndBossTime = function() {
-        const masteryClickValRaw = getRawMasteryClickValue();
-        const damageClickValRaw = getRawDamageClickValue();
-        const bossHpRaw = getRawBossHpValue();
-        
-        const dpsAutoDamage = damageClickValRaw * CPS_AUTO;
-        const dpsNorDamage = damageClickValRaw * CPS_NOR;
-
-        let bossTimeAuto = 0;
-        if (dpsAutoDamage > 0) bossTimeAuto = bossHpRaw / dpsAutoDamage;
-        
-        let bossTimeNor = 0;
-        if (dpsNorDamage > 0) bossTimeNor = bossHpRaw / dpsNorDamage;
-        
-        document.getElementById('bossTimeAuto').innerText = dpsAutoDamage > 0 ? formatTimeDisplay(bossTimeAuto) : "Vô cực (Sát thương = 0)";
-        document.getElementById('bossTimeNor').innerText = dpsNorDamage > 0 ? formatTimeDisplay(bossTimeNor) : "Vô cực (Sát thương = 0)";
-
-        const hours = parseFloat(document.getElementById('timeHours').value) || 0;
-        const minutes = parseFloat(document.getElementById('timeMinutes').value) || 0;
-        const seconds = parseFloat(document.getElementById('timeSeconds').value) || 0;
-        const totalTimeSeconds = (hours * 3600) + (minutes * 60) + seconds;
-        
-        const masteryAuto = masteryClickValRaw * CPS_AUTO * totalTimeSeconds;
-        const masteryNor = masteryClickValRaw * CPS_NOR * totalTimeSeconds;
-        
-        document.getElementById('masteryByTimeAuto').innerText = formatNumber(masteryAuto);
-        document.getElementById('masteryByTimeNor').innerText = formatNumber(masteryNor);
-    };
-
-    window.onload = () => {
-        initUI();
-        setupFirebase();
-    };
-</script>
-
+        window.onload = () => { initUI(); setupFirebase(); };
+    </script>
 </body>
 </html>
