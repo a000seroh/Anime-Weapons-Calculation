@@ -371,7 +371,7 @@
         <!-- === CỘT TRÁI: NHẬP LIỆU === -->
         <div class="left-panel">
             <div class="brand-header">
-                <h1 class="brand-title">⚔️ Anime Weapons <span>Calculation</span></h1>
+                <h1 class="brand-title">⚔️ Anime Weapons <span>Calc</span></h1>
                 <div class="brand-subtitle">Công cụ tính toán Sát thương, Mastery và Rank</div>
             </div>
 
@@ -396,6 +396,19 @@
                             <div class="input-wrapper" style="flex:1;">
                                 <span style="color:#666; margin-right:5px;">Mục tiêu</span>
                                 <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NEW: MASTERY HIỆN TẠI -->
+                    <div class="control-section">
+                        <div class="section-header">
+                            <span class="label-text">MASTERY ĐANG CÓ</span>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')">
+                                <select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select>
                             </div>
                         </div>
                     </div>
@@ -457,7 +470,7 @@
             <div id="rankOutput">
                 <!-- 1. BIG TIMER -->
                 <div class="timer-card">
-                    <div class="timer-label">THỜI GIAN CÀY RANK (FAST 6.7X)</div>
+                    <div class="timer-label">THỜI GIAN CÒN LẠI (FAST 6.7X)</div>
                     <div class="big-time" id="mainTimerDisplay">0<span class="time-unit">s</span></div>
                     <div class="sub-info">
                         Nor (5x): <span class="highlight" id="subTimerDisplay">0s</span>
@@ -473,7 +486,7 @@
                             <div class="stat-icon">⚔️</div>
                         </div>
                         <div class="stat-value" style="font-size: 36px;" id="totalCostDisplay">0</div>
-                        <div class="stat-sub">Từ Rank <span id="rankRange">0 → 1</span></div>
+                        <div class="stat-sub">Đã trừ số đang có</div>
                     </div>
 
                     <!-- Combined Speed Card -->
@@ -719,8 +732,11 @@
             const startRank = parseInt(document.getElementById('currentRank').value) || 0;
             const endRank = parseInt(document.getElementById('targetRank').value) || 1;
             const clickVal = getRawVal('clickVal', 'clickUnit');
+            
+            // Lấy giá trị Mastery đang có
+            const currentMastery = getRawVal('currentMasteryVal', 'currentMasteryUnit');
 
-            document.getElementById('rankRange').innerText = `${startRank} → ${endRank}`;
+            // document.getElementById('rankRange').innerText = `${startRank} → ${endRank}`;
 
             if (startRank >= endRank) {
                 document.getElementById('totalCostDisplay').innerText = "---";
@@ -733,7 +749,11 @@
                 if (RANK_COSTS[i]) totalCost += RANK_COSTS[i];
             }
             
-            document.getElementById('totalCostDisplay').innerText = formatNumber(totalCost);
+            // Trừ đi mastery đã có
+            let remainingCost = totalCost - currentMastery;
+            if (remainingCost < 0) remainingCost = 0;
+
+            document.getElementById('totalCostDisplay').innerText = formatNumber(remainingCost);
 
             const dpsAuto = clickVal * CPS_AUTO;
             const dpsNor = clickVal * CPS_NOR;
@@ -742,8 +762,9 @@
             document.getElementById('dpsDisplay').innerText = formatNumber(dpsAuto);
             document.getElementById('dpsNorDisplay').innerText = formatNumber(dpsNor);
             
-            const timeAuto = dpsAuto > 0 ? totalCost / dpsAuto : 0;
-            const timeNor = dpsNor > 0 ? totalCost / dpsNor : 0;
+            // Tính thời gian dựa trên remainingCost
+            const timeAuto = dpsAuto > 0 ? remainingCost / dpsAuto : 0;
+            const timeNor = dpsNor > 0 ? remainingCost / dpsNor : 0;
 
             document.getElementById('mainTimerDisplay').innerHTML = formatBigTime(timeAuto);
             document.getElementById('subTimerDisplay').innerText = formatTextTime(timeNor);
@@ -786,7 +807,8 @@
         // --- INITIALIZATION & FIREBASE ---
         function initUI() {
             buildRankCosts();
-            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit'];
+            // Đã thêm 'currentMasteryUnit' vào
+            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit'];
             unitSelects.forEach(id => {
                 const el = document.getElementById(id);
                 el.innerHTML = '';
@@ -804,6 +826,10 @@
             if (!userId || !db) return;
             const settings = {
                 activeTab: document.getElementById('rankTabBtn').classList.contains('active') ? 'rank' : 'mastery',
+                
+                currentMasteryVal: document.getElementById('currentMasteryVal').value,
+                currentMasteryUnit: document.getElementById('currentMasteryUnit').value,
+                
                 clickVal: document.getElementById('clickVal').value,
                 clickUnit: document.getElementById('clickUnit').value,
                 damageVal: document.getElementById('damageVal').value,
@@ -826,6 +852,10 @@
                 const snap = await getDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName));
                 if (snap.exists()) {
                     const s = snap.data();
+                    
+                    document.getElementById('currentMasteryVal').value = s.currentMasteryVal || '0';
+                    document.getElementById('currentMasteryUnit').value = s.currentMasteryUnit || '1';
+                    
                     document.getElementById('clickVal').value = s.clickVal || '0';
                     document.getElementById('clickUnit').value = s.clickUnit || '1';
                     document.getElementById('damageVal').value = s.damageVal || '0';
