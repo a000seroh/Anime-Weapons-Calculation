@@ -12,7 +12,7 @@
             --bg-input: #000000;
             --border-color: #222;
             --accent-primary: #2962ff; /* Xanh dương đậm */
-            --accent-glow: rgba(41, 98, 255, 0.15);
+            --accent-glow: rgba(41, 98, 255, 0.4);
             --accent-text: #448aff;
             --text-primary: #ffffff;
             --text-secondary: #666666;
@@ -36,12 +36,11 @@
             flex-direction: column; 
             align-items: center;    
             min-height: 100vh;
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
-        /* Cho phép bôi đen trong input để nhập liệu */
         input, textarea {
             -webkit-user-select: text;
             -ms-user-select: text;
@@ -85,18 +84,73 @@
             line-height: 1.4;
         }
 
-        .control-card {
+        /* --- CARD GLOW EFFECT CSS --- */
+        .card-glow {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            /* Nếu nội dung dài thì cho scroll */
-            max-height: 80vh;
-            overflow-y: auto;
+            position: relative;
+            /* overflow: hidden; -> Bỏ hidden để tooltip hoặc shadow không bị cắt nếu cần, nhưng cẩn thận */
+        }
+
+        /* Hiệu ứng Spotlight Border */
+        .card-glow::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            padding: 1.5px; /* Độ dày viền sáng */
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y),
+                var(--accent-glow),
+                transparent 40%
+            );
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0; /* Ẩn mặc định */
+            transition: opacity 0.3s ease;
+        }
+
+        /* Khi hover vào thì hiện viền sáng */
+        .card-glow:hover::before {
+            opacity: 1;
         }
         
-        /* Tùy chỉnh thanh cuộn cho control-card */
+        /* Hiệu ứng nền sáng nhẹ bên trong khi hover */
+        .card-glow::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y),
+                rgba(41, 98, 255, 0.05),
+                transparent 40%
+            );
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card-glow:hover::after {
+            opacity: 1;
+        }
+
+        /* --- Specific Card Styles --- */
+
+        .control-card {
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1; /* Để hiệu ứng glow nằm trên */
+        }
+        
         .control-card::-webkit-scrollbar { width: 6px; }
         .control-card::-webkit-scrollbar-track { background: var(--bg-card); }
         .control-card::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -104,12 +158,14 @@
         /* Tabs Styling */
         .nav-tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* Thêm cột cho tab mới */
+            grid-template-columns: 1fr 1fr 1fr;
             background: #050505;
             padding: 4px;
             border-radius: 10px;
             border: 1px solid var(--border-color);
             margin-bottom: 24px;
+            position: relative; 
+            z-index: 5; /* Nổi lên trên card */
         }
 
         .nav-btn {
@@ -119,7 +175,7 @@
             padding: 10px 5px;
             font-family: var(--font-sans);
             font-weight: 700;
-            font-size: 11px; /* Giảm size xíu để vừa 3 nút */
+            font-size: 11px;
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.3s ease;
@@ -132,11 +188,11 @@
         .nav-btn.active {
             background-color: var(--accent-primary);
             color: #fff;
-            box-shadow: 0 4px 12px var(--accent-glow);
+            box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2);
         }
 
         /* Inputs Styling */
-        .control-section { margin-bottom: 20px; }
+        .control-section { margin-bottom: 20px; position: relative; z-index: 5; }
 
         .section-header {
             display: flex;
@@ -204,7 +260,7 @@
             gap: 8px;
         }
 
-        /* --- UPDATE LOGS STYLING (LEFT PANEL) --- */
+        /* --- UPDATE LOGS STYLING --- */
         .version-list {
             display: flex;
             flex-direction: column;
@@ -212,18 +268,14 @@
         }
 
         .version-item {
-            background-color: var(--bg-update-item);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            /* Kế thừa .card-glow style */
             padding: 15px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.2s ease;
+            z-index: 1;
         }
 
         .version-item:hover {
-            border-color: #444;
             transform: translateY(-1px);
         }
 
@@ -232,14 +284,12 @@
             background: linear-gradient(90deg, rgba(41,98,255,0.1) 0%, rgba(0,0,0,0) 100%);
         }
         
-        .version-item.active::before {
-            content: '';
+        /* Thanh chỉ thị active bên trái */
+        .version-item.active .active-indicator {
             position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
+            left: 0; top: 0; bottom: 0; width: 4px;
             background-color: var(--accent-primary);
+            border-radius: 4px 0 0 4px;
         }
 
         .v-title {
@@ -247,11 +297,13 @@
             font-size: 14px;
             color: #fff;
             margin-bottom: 4px;
+            position: relative; z-index: 2;
         }
         .v-date {
             font-size: 11px;
             color: var(--text-secondary);
             font-family: var(--font-mono);
+            position: relative; z-index: 2;
         }
 
         /* --- CỘT PHẢI (HIỂN THỊ) --- */
@@ -261,32 +313,18 @@
             gap: 24px;
         }
 
-        /* Big Timer Card */
+        /* Big Timer Card - Special Style */
         .timer-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
             padding: 40px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 240px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        
-        .timer-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(41,98,255,0.08) 0%, rgba(0,0,0,0) 60%);
-            pointer-events: none;
+            min-height: 240px;
+            /* Override border màu cho nổi bật */
+            --accent-glow: rgba(41, 98, 255, 0.8); 
         }
 
         .timer-label {
@@ -296,7 +334,7 @@
             text-transform: uppercase;
             margin-bottom: 12px;
             font-weight: 700;
-            z-index: 1;
+            z-index: 2;
         }
 
         .big-time {
@@ -304,10 +342,10 @@
             font-size: 64px;
             font-weight: 700;
             color: #fff;
-            text-shadow: 0 0 30px rgba(41, 98, 255, 0.2);
+            text-shadow: 0 0 30px rgba(41, 98, 255, 0.4);
             line-height: 1.1;
             margin-bottom: 12px;
-            z-index: 1;
+            z-index: 2;
         }
         
         .time-unit { font-size: 0.5em; color: var(--text-secondary); font-weight: 400; margin-right: 6px;}
@@ -319,7 +357,7 @@
             background: rgba(255,255,255,0.05);
             padding: 6px 12px;
             border-radius: 20px;
-            z-index: 1;
+            z-index: 2;
         }
         .highlight { color: var(--accent-text); font-weight: bold; margin-left: 5px; }
 
@@ -332,21 +370,18 @@
 
         /* STAT CARD DESIGN */
         .stat-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             min-height: 150px;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 1;
         }
         
         .stat-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            border-color: #333;
         }
         
         .stat-header {
@@ -354,6 +389,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 16px;
+            position: relative; z-index: 2;
         }
 
         .stat-title {
@@ -366,24 +402,18 @@
             line-height: 1.4;
         }
         
-        .stat-icon {
-            font-size: 18px;
-            color: #fff; 
-            opacity: 0.7;
-        }
+        .stat-icon { font-size: 18px; color: #fff; opacity: 0.7; }
 
-        /* Combined Row Style */
         .stat-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            position: relative; z-index: 2;
         }
         .stat-row:last-child { margin-bottom: 0; }
 
-        .stat-col-val {
-            text-align: left;
-        }
+        .stat-col-val { text-align: left; }
         .stat-value-sm {
             font-family: var(--font-mono);
             font-size: 20px;
@@ -391,13 +421,8 @@
             color: #fff;
             line-height: 1.2;
         }
-        .stat-label-sm {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
+        .stat-label-sm { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
         
-        /* Màu riêng cho Fast/Nor */
         .accent-fast { color: var(--accent-text); }
         .accent-nor { color: #aaa; }
 
@@ -409,20 +434,19 @@
             word-break: break-all;
             margin-bottom: 8px;
             line-height: 1.1;
+            position: relative; z-index: 2;
         }
 
         .stat-sub {
             font-size: 12px;
             color: var(--text-secondary);
             font-family: var(--font-sans);
+            position: relative; z-index: 2;
         }
 
         /* --- UPDATE DETAILS (RIGHT PANEL) --- */
         .update-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 0; /* Header riêng, body riêng */
+            padding: 0; /* Header riêng, body riêng, không dùng padding chung */
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             min-height: 400px;
@@ -435,14 +459,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative; z-index: 2;
         }
         
-        .up-title {
-            font-family: var(--font-mono);
-            font-size: 24px;
-            font-weight: 800;
-            color: #fff;
-        }
+        .up-title { font-family: var(--font-mono); font-size: 24px; font-weight: 800; color: #fff; }
 
         .up-date {
             font-family: var(--font-mono);
@@ -458,20 +478,11 @@
             font-size: 14px;
             line-height: 1.8;
             color: #e0e0e0;
+            position: relative; z-index: 2;
         }
 
-        .update-list-ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .update-list-ul li {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 12px;
-        }
-
+        .update-list-ul { list-style: none; padding: 0; margin: 0; }
+        .update-list-ul li { position: relative; padding-left: 20px; margin-bottom: 12px; }
         .update-list-ul li::before {
             content: '-';
             position: absolute;
@@ -494,7 +505,6 @@
             .app-container { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
             .big-time { font-size: 48px; }
-            /* Khi ở mobile, control-card vẫn hiện để chọn version */
         }
         
         .hidden { display: none; }
@@ -511,7 +521,8 @@
                 <div class="brand-subtitle">Công cụ tính toán Sát thương, Mastery và Rank</div>
             </div>
 
-            <div class="control-card">
+            <!-- Thêm class card-glow -->
+            <div class="control-card card-glow">
                 <!-- TABS -->
                 <div class="nav-tabs">
                     <button class="nav-btn active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
@@ -550,7 +561,7 @@
                         </div>
                     </div>
 
-                    <!-- COMMON INPUT: MASTERY PER CLICK (Moved inside Rank/Mastery views for clarity or kept shared) -->
+                    <!-- COMMON INPUT: MASTERY PER CLICK -->
                      <div class="control-section">
                         <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
                         <div class="input-row">
@@ -627,7 +638,7 @@
             <!-- KẾT QUẢ: RANK TAB -->
             <div id="rankOutput">
                 <!-- 1. BIG TIMER -->
-                <div class="timer-card">
+                <div class="timer-card card-glow">
                     <div class="timer-label">THỜI GIAN CÒN LẠI (FAST 6.7X)</div>
                     <div class="big-time" id="mainTimerDisplay">0<span class="time-unit">s</span></div>
                     <div class="sub-info">
@@ -637,7 +648,7 @@
 
                 <!-- 2. STATS -->
                 <div class="stats-grid">
-                    <div class="stat-card" style="justify-content: center;">
+                    <div class="stat-card card-glow" style="justify-content: center;">
                         <div class="stat-header" style="border:none; margin-bottom:5px;">
                             <div class="stat-title">TỔNG MASTERY CẦN</div>
                             <div class="stat-icon">⚔️</div>
@@ -646,7 +657,7 @@
                         <div class="stat-sub">Đã trừ số đang có</div>
                     </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card card-glow">
                         <div class="stat-header">
                             <div class="stat-title">TỐC ĐỘ MASTERY</div>
                             <div class="stat-icon">✨</div>
@@ -670,7 +681,7 @@
             <!-- KẾT QUẢ: BOSS & MASTERY TAB -->
             <div id="masteryOutput" class="hidden">
                 <!-- 1. BIG TIMER (BOSS) -->
-                <div class="timer-card">
+                <div class="timer-card card-glow">
                     <div class="timer-label">THỜI GIAN HẠ BOSS (FAST 6.7X)</div>
                     <div class="big-time" id="bossTimerAuto">0<span class="time-unit">s</span></div>
                     <div class="sub-info">
@@ -680,7 +691,7 @@
 
                 <!-- 2. STATS GRID -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card card-glow">
                         <div class="stat-header">
                             <div class="stat-title">THÔNG TIN BOSS</div>
                             <div class="stat-icon">🩸</div>
@@ -710,7 +721,7 @@
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card card-glow">
                         <div class="stat-header">
                             <div class="stat-title">MASTERY ĐẠT ĐƯỢC</div>
                             <div class="stat-icon">📦</div>
@@ -733,7 +744,7 @@
 
             <!-- KẾT QUẢ: UPDATE LOGS (New) -->
             <div id="updateOutput" class="hidden">
-                <div class="update-card">
+                <div class="update-card card-glow">
                     <div class="update-header-box">
                         <div class="up-title" id="displayUpTitle">Game Release</div>
                         <div class="up-date" id="displayUpDate">14/11/2025</div>
@@ -772,13 +783,37 @@
                 title: 'Update 1 Pt.2',
                 date: '21/11/2025',
                 content: `
-                    <strong>Đã thêm!</strong>
+                    <strong>Chế độ chơi mới: Phòng thủ!</strong>
                     <ul class="update-list-ul">
-                        <li>Mảnh Giao dịch Gacha (Gacha Trade Shard)!</li>
-                        <li>Huyết Quỷ Thuật (Demon Arts) kèm Nâng cấp!</li>
-                        <li>Chế độ Phòng thủ (Defense Mode)!</li>
+                        <li>Đánh bại các đợt kẻ thù đang cố gắng phá hủy lâu đài của bạn!</li>
+                        <li>Hoàn thành mỗi đợt, bạn có cơ hội nhận được Sức mạnh Phòng thủ!</li>
+                        <li>Đã thêm Thành tựu cho chế độ Phòng thủ!</li>
                     </ul>
-                    <strong>Thêm Cải thiện trải nghiệm (QOL)!</strong>
+                    <strong>Giao dịch Mảnh (Shard Trade)</strong>
+                    <ul class="update-list-ul">
+                        <li>Hãy tận dụng Token dư thừa! Đổi chúng với tỷ lệ 10:1 tại Làng Shinobi!</li>
+                    </ul>
+                    <strong>Bổ sung:</strong>
+                    <ul class="update-list-ul">
+                        <li>Huyết Quỷ Thuật (Demon Arts) kèm nâng cấp!</li>
+                        <li>Gói Giới hạn Mới!</li>
+                    </ul>
+                    <strong>Cải thiện trải nghiệm (QOL):</strong>
+                    <ul class="update-list-ul">
+                        <li>Sức mạnh Raid giờ rớt mỗi đợt; trước đây là mỗi 5 đợt;</li>
+                        <li>Thêm chỉ số cấp độ và sức mạnh vào popup vật phẩm gacha đã nâng cấp;</li>
+                        <li>Thêm gợi ý tương tác: Yêu thích và theo dõi sự kiện mà không cần thoát game;</li>
+                        <li>Cải thiện một số giao diện;</li>
+                    </ul>
+                    <strong>Sửa lỗi:</strong>
+                    <ul class="update-list-ul">
+                        <li>Gỡ Avatar không trả nhân vật về trạng thái gốc;</li>
+                        <li>Thú cưng trang bị quá giới hạn giờ sẽ tự động gỡ bỏ;</li>
+                        <li>Khắc phục lỗi hiển thị người chơi bị kẹt trên không (đối với người khác);</li>
+                        <li>Thuốc không hiển thị chỉ số cộng thêm trong túi đồ;</li>
+                    </ul>
+                    <br>
+                    <div style="font-weight:bold; color:var(--accent-text);">MỌI THAY ĐỔI CÓ SẴN TRONG PHIÊN BẢN 10500 HOẶC CAO HƠN</div>
                 `
             },
             {
@@ -1025,14 +1060,19 @@
             container.innerHTML = '';
             UPDATE_DATA.forEach((item, index) => {
                 const el = document.createElement('div');
-                el.className = `version-item ${index === 0 ? 'active' : ''}`; // Select first by default
+                // Thêm class card-glow và version-item
+                el.className = `version-item card-glow ${index === 0 ? 'active' : ''}`;
                 el.onclick = () => selectUpdate(index);
                 el.innerHTML = `
+                    <div class="active-indicator"></div>
                     <div class="v-title">${item.title}</div>
                     <div class="v-date">${item.date}</div>
                 `;
                 container.appendChild(el);
             });
+            // Init mouse tracking for new elements
+            initCardGlow();
+            
             // Show first item content
             if (UPDATE_DATA.length > 0) selectUpdate(0);
         }
@@ -1211,6 +1251,22 @@
             // Sync dup inputs
             document.getElementById('clickUnitDup').value = document.getElementById('clickUnit').value;
             document.getElementById('clickValDup').value = document.getElementById('clickVal').value;
+            
+            initCardGlow(); // Init for existing elements
+        }
+
+        // --- SPOTLIGHT EFFECT JS ---
+        function initCardGlow() {
+            document.querySelectorAll('.card-glow').forEach(card => {
+                // Remove old listeners to prevent duplicates if recalled
+                card.onmousemove = e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                };
+            });
         }
 
         async function saveSettings() {
@@ -1292,7 +1348,8 @@
 
         window.onload = () => { initUI(); setupFirebase(); };
     </script>
-    <!-- Add anti-f12 script here -->
+    
+    <!-- Anti-F12 and Copy Scripts -->
     <script>
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
