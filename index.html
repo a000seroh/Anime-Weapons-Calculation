@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AW.Calc - Mastery & Damage</title>
-    <!-- Thêm Favicon (Icon thanh kiếm) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+    <!-- Đổi Favicon thành file ảnh của bạn -->
+    <link rel="icon" href="favicon.png" type="image/png">
     
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -66,11 +66,34 @@
             gap: 20px;
         }
 
-        .brand-header { margin-bottom: 10px; }
+        /* Cập nhật Brand Header để chứa Logo ảnh */
+        .brand-header { 
+            margin-bottom: 20px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Căn giữa logo và chữ */
+            text-align: center;
+        }
+        
+        /* Style cho Logo ảnh */
+        .brand-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover; /* Đảm bảo ảnh không bị méo */
+            border-radius: 20px; /* Bo góc mềm mại */
+            margin-bottom: 15px;
+            box-shadow: 0 8px 30px rgba(41, 98, 255, 0.2); /* Đổ bóng xanh nhẹ */
+            border: 2px solid #222;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.05) rotate(2deg); /* Hiệu ứng nhẹ khi di chuột vào logo */
+        }
         
         .brand-title {
             font-family: var(--font-mono);
-            font-size: 20px; 
+            font-size: 22px; /* Tăng size chữ lên xíu */
             font-weight: 800;
             color: #fff;
             margin: 0;
@@ -80,11 +103,12 @@
         .brand-title span { color: var(--accent-primary); }
         
         .brand-subtitle {
-            font-size: 11px; 
+            font-size: 12px; 
             color: var(--text-secondary);
             margin-top: 6px;
             font-weight: 500;
             line-height: 1.4;
+            max-width: 280px; /* Giới hạn chiều rộng để xuống dòng đẹp hơn */
         }
 
         /* --- CARD GLOW EFFECT CSS --- */
@@ -93,7 +117,6 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             position: relative;
-            /* overflow: hidden; -> Bỏ hidden để tooltip hoặc shadow không bị cắt nếu cần, nhưng cẩn thận */
         }
 
         /* Hiệu ứng Spotlight Border */
@@ -102,7 +125,7 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             border-radius: inherit;
-            padding: 1.5px; /* Độ dày viền sáng */
+            padding: 1.5px; 
             background: radial-gradient(
                 600px circle at var(--mouse-x) var(--mouse-y),
                 var(--accent-glow),
@@ -115,16 +138,14 @@
             mask-composite: exclude;
             z-index: 2;
             pointer-events: none;
-            opacity: 0; /* Ẩn mặc định */
+            opacity: 0; 
             transition: opacity 0.3s ease;
         }
 
-        /* Khi hover vào thì hiện viền sáng */
         .card-glow:hover::before {
             opacity: 1;
         }
         
-        /* Hiệu ứng nền sáng nhẹ bên trong khi hover */
         .card-glow::after {
             content: "";
             position: absolute;
@@ -151,7 +172,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             max-height: 80vh;
             overflow-y: auto;
-            z-index: 1; /* Để hiệu ứng glow nằm trên */
+            z-index: 1; 
         }
         
         .control-card::-webkit-scrollbar { width: 6px; }
@@ -168,7 +189,7 @@
             border: 1px solid var(--border-color);
             margin-bottom: 24px;
             position: relative; 
-            z-index: 5; /* Nổi lên trên card */
+            z-index: 5; 
         }
 
         .nav-btn {
@@ -271,7 +292,6 @@
         }
 
         .version-item {
-            /* Kế thừa .card-glow style */
             padding: 15px;
             cursor: pointer;
             transition: transform 0.2s ease;
@@ -287,7 +307,6 @@
             background: linear-gradient(90deg, rgba(41,98,255,0.1) 0%, rgba(0,0,0,0) 100%);
         }
         
-        /* Thanh chỉ thị active bên trái */
         .version-item.active .active-indicator {
             position: absolute;
             left: 0; top: 0; bottom: 0; width: 4px;
@@ -316,7 +335,7 @@
             gap: 24px;
         }
 
-        /* Big Timer Card - Special Style */
+        /* Big Timer Card */
         .timer-card {
             padding: 40px;
             text-align: center;
@@ -326,7 +345,6 @@
             align-items: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             min-height: 240px;
-            /* Override border màu cho nổi bật */
             --accent-glow: rgba(41, 98, 255, 0.8); 
         }
 
@@ -447,9 +465,9 @@
             position: relative; z-index: 2;
         }
 
-        /* --- UPDATE DETAILS (RIGHT PANEL) --- */
+        /* --- UPDATE DETAILS --- */
         .update-card {
-            padding: 0; /* Header riêng, body riêng, không dùng padding chung */
+            padding: 0;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             min-height: 400px;
@@ -520,6 +538,8 @@
         <!-- === CỘT TRÁI: ĐIỀU KHIỂN & DANH SÁCH CẬP NHẬT === -->
         <div class="left-panel">
             <div class="brand-header">
+                <!-- HÌNH ẢNH LOGO -->
+                <img src="favicon.png" alt="Anime Shutdown Logo" class="brand-logo">
                 <h1 class="brand-title">⚔️ Anime Weapons <span>Calc</span></h1>
                 <div class="brand-subtitle">Công cụ tính toán Sát thương, Mastery và Rank</div>
             </div>
