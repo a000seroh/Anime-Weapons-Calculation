@@ -19,10 +19,13 @@
             --text-value: #e0e0e0;
             --font-mono: 'JetBrains Mono', monospace;
             --font-sans: 'Inter', sans-serif;
+            --bg-update-item: #151515;
+            --bg-update-active: #2962ff;
         }
 
         * { box-sizing: border-box; outline: none; }
 
+        /* Chặn bôi đen văn bản để hạn chế copy */
         body {
             background-color: var(--bg-app);
             color: var(--text-primary);
@@ -33,6 +36,16 @@
             flex-direction: column; 
             align-items: center;    
             min-height: 100vh;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+        
+        /* Cho phép bôi đen trong input để nhập liệu */
+        input, textarea {
+            -webkit-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
         }
 
         .app-container {
@@ -78,12 +91,20 @@
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            /* Nếu nội dung dài thì cho scroll */
+            max-height: 80vh;
+            overflow-y: auto;
         }
+        
+        /* Tùy chỉnh thanh cuộn cho control-card */
+        .control-card::-webkit-scrollbar { width: 6px; }
+        .control-card::-webkit-scrollbar-track { background: var(--bg-card); }
+        .control-card::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
         /* Tabs Styling */
         .nav-tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr; /* Thêm cột cho tab mới */
             background: #050505;
             padding: 4px;
             border-radius: 10px;
@@ -95,14 +116,15 @@
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            padding: 10px;
+            padding: 10px 5px;
             font-family: var(--font-sans);
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px; /* Giảm size xíu để vừa 3 nút */
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.3s ease;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .nav-btn:hover { color: #fff; }
@@ -180,6 +202,56 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
+        }
+
+        /* --- UPDATE LOGS STYLING (LEFT PANEL) --- */
+        .version-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .version-item {
+            background-color: var(--bg-update-item);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .version-item:hover {
+            border-color: #444;
+            transform: translateY(-1px);
+        }
+
+        .version-item.active {
+            border-color: var(--accent-primary);
+            background: linear-gradient(90deg, rgba(41,98,255,0.1) 0%, rgba(0,0,0,0) 100%);
+        }
+        
+        .version-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--accent-primary);
+        }
+
+        .v-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .v-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
         }
 
         /* --- CỘT PHẢI (HIỂN THỊ) --- */
@@ -345,6 +417,69 @@
             font-family: var(--font-sans);
         }
 
+        /* --- UPDATE DETAILS (RIGHT PANEL) --- */
+        .update-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 0; /* Header riêng, body riêng */
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            min-height: 400px;
+        }
+
+        .update-header-box {
+            background: #111;
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .up-title {
+            font-family: var(--font-mono);
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .up-date {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--accent-text);
+            background: rgba(41, 98, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .update-content {
+            padding: 30px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        .update-list-ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .update-list-ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .update-list-ul li::before {
+            content: '-';
+            position: absolute;
+            left: 0;
+            color: var(--accent-text);
+            font-weight: bold;
+        }
+
         .footer {
             margin-top: 60px;
             text-align: center;
@@ -359,6 +494,7 @@
             .app-container { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr; }
             .big-time { font-size: 48px; }
+            /* Khi ở mobile, control-card vẫn hiện để chọn version */
         }
         
         .hidden { display: none; }
@@ -368,7 +504,7 @@
 
     <div class="app-container">
         
-        <!-- === CỘT TRÁI: NHẬP LIỆU === -->
+        <!-- === CỘT TRÁI: ĐIỀU KHIỂN & DANH SÁCH CẬP NHẬT === -->
         <div class="left-panel">
             <div class="brand-header">
                 <h1 class="brand-title">⚔️ Anime Weapons <span>Calc</span></h1>
@@ -379,7 +515,8 @@
                 <!-- TABS -->
                 <div class="nav-tabs">
                     <button class="nav-btn active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
-                    <button class="nav-btn" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss & Mastery</button>
+                    <button class="nav-btn" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss/Mastery</button>
+                    <button class="nav-btn" id="updateTabBtn" onclick="window.showSection('updates')">Cập nhật</button>
                 </div>
 
                 <!-- 1. RANK INPUTS -->
@@ -409,6 +546,17 @@
                             <div class="input-wrapper">
                                 <input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')">
                                 <select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COMMON INPUT: MASTERY PER CLICK (Moved inside Rank/Mastery views for clarity or kept shared) -->
+                     <div class="control-section">
+                        <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')">
+                                <select id="clickUnit" onchange="window.handleInput('clickUnit')"></select>
                             </div>
                         </div>
                     </div>
@@ -447,16 +595,26 @@
                             <div class="input-wrapper"><input type="number" id="timeSeconds" placeholder="Giây" oninput="window.handleInput('timeSeconds')"></div>
                         </div>
                     </div>
+
+                    <!-- REPEAT COMMON INPUT FOR UX -->
+                     <div class="control-section">
+                        <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="number" id="clickValDup" placeholder="0" oninput="window.syncClickVal(this.value)">
+                                <select id="clickUnitDup" onchange="window.syncClickUnit(this.value)"></select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- 3. COMMON INPUT: MASTERY PER CLICK -->
-                <div class="control-section" id="masteryClickInput">
-                    <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
-                    <div class="input-row">
-                        <div class="input-wrapper">
-                            <input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')">
-                            <select id="clickUnit" onchange="window.handleInput('clickUnit')"></select>
-                        </div>
+                <!-- 3. UPDATE LOGS LIST (New) -->
+                <div id="updateInputs" class="hidden">
+                     <div class="section-header" style="margin-bottom:15px;">
+                        <span class="label-text">DANH SÁCH PHIÊN BẢN</span>
+                    </div>
+                    <div class="version-list" id="versionListContainer">
+                        <!-- JS will inject items here -->
                     </div>
                 </div>
 
@@ -477,9 +635,8 @@
                     </div>
                 </div>
 
-                <!-- 2. STATS (GỘP FAST & NOR) -->
+                <!-- 2. STATS -->
                 <div class="stats-grid">
-                    <!-- Total Cost -->
                     <div class="stat-card" style="justify-content: center;">
                         <div class="stat-header" style="border:none; margin-bottom:5px;">
                             <div class="stat-title">TỔNG MASTERY CẦN</div>
@@ -489,22 +646,17 @@
                         <div class="stat-sub">Đã trừ số đang có</div>
                     </div>
 
-                    <!-- Combined Speed Card -->
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-title">TỐC ĐỘ MASTERY</div>
                             <div class="stat-icon">✨</div>
                         </div>
-                        
-                        <!-- Fast Row -->
                         <div class="stat-row">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-fast" id="dpsDisplay">0</div>
                                 <div class="stat-label-sm">Fast (6.7x)</div>
                             </div>
                         </div>
-                        
-                        <!-- Nor Row -->
                         <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-nor" id="dpsNorDisplay">0</div>
@@ -528,38 +680,28 @@
 
                 <!-- 2. STATS GRID -->
                 <div class="stats-grid">
-                    
-                    <!-- Info Group (HP + DMG) -->
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-title">THÔNG TIN BOSS</div>
                             <div class="stat-icon">🩸</div>
                         </div>
-                        
-                        <!-- Boss HP -->
                         <div class="stat-row">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm" id="bossHpDisplay">0</div>
                                 <div class="stat-label-sm">Mục tiêu Máu Boss</div>
                             </div>
                         </div>
-
-                        <!-- Damage -->
                         <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
                             <div class="stat-col-val">
                                 <div class="stat-title" style="margin-bottom: 5px; color: var(--text-secondary);">SÁT THƯƠNG MỖI GIÂY</div>
                             </div>
                         </div>
-                        
-                        <!-- Damage Fast -->
                         <div class="stat-row">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div>
                                 <div class="stat-label-sm">Fast (6.7x)</div>
                             </div>
                         </div>
-
-                        <!-- Damage Nor -->
                         <div class="stat-row" style="border-top:1px dashed #333; padding-top:5px;">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-nor" id="damageDpsNorDisplay">0</div>
@@ -568,22 +710,17 @@
                         </div>
                     </div>
 
-                    <!-- Combined Mastery Gained Card -->
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-title">MASTERY ĐẠT ĐƯỢC</div>
                             <div class="stat-icon">📦</div>
                         </div>
-
-                        <!-- Fast Row -->
                         <div class="stat-row">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-fast" id="masteryGainedDisplay">0</div>
                                 <div class="stat-label-sm">Fast (6.7x)</div>
                             </div>
                         </div>
-
-                        <!-- Nor Row -->
                         <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
                             <div class="stat-col-val">
                                 <div class="stat-value-sm accent-nor" id="masteryGainedNorDisplay">0</div>
@@ -591,7 +728,19 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
+            <!-- KẾT QUẢ: UPDATE LOGS (New) -->
+            <div id="updateOutput" class="hidden">
+                <div class="update-card">
+                    <div class="update-header-box">
+                        <div class="up-title" id="displayUpTitle">Game Release</div>
+                        <div class="up-date" id="displayUpDate">14/11/2025</div>
+                    </div>
+                    <div class="update-content" id="displayUpContent">
+                        <!-- Content goes here -->
+                    </div>
                 </div>
             </div>
 
@@ -616,6 +765,187 @@
         const userSettingsPath = `artifacts/${appId}/users/`;
         const settingsDocName = 'calculator_settings';
         
+        // --- DATA UPDATE LOGS ---
+        const UPDATE_DATA = [
+            {
+                id: 'update_1_pt2',
+                title: 'Update 1 Pt.2',
+                date: '21/11/2025',
+                content: `
+                    <strong>Đã thêm!</strong>
+                    <ul class="update-list-ul">
+                        <li>Mảnh Giao dịch Gacha (Gacha Trade Shard)!</li>
+                        <li>Huyết Quỷ Thuật (Demon Arts) kèm Nâng cấp!</li>
+                        <li>Chế độ Phòng thủ (Defense Mode)!</li>
+                    </ul>
+                    <strong>Thêm Cải thiện trải nghiệm (QOL)!</strong>
+                `
+            },
+            {
+                id: 'update_1',
+                title: 'Update 1',
+                date: '21/11/2025',
+                content: `
+                    <strong>Khu vực mới: Paradis</strong>
+                    <ul class="update-list-ul">
+                        <li>Vũ khí mới (+6)</li>
+                        <li>Avatar mới (+6)</li>
+                        <li>Sao mới (+7)</li>
+                        <li>Phụ kiện mới (+4)</li>
+                    </ul>
+                    <strong>Thay đổi cơ chế Ngọc lục bảo (Emeralds) từ Code:</strong>
+                    <ul class="update-list-ul">
+                        <li>Không thể dùng để tặng quà; có chỉ báo đỏ hiển thị số lượng không thể tặng.</li>
+                    </ul>
+                    <strong>Gacha mới:</strong>
+                    <ul class="update-list-ul">
+                        <li>Titans Gacha</li>
+                        <li>Gacha Tổ chức (Organizations)</li>
+                    </ul>
+                    <strong>Mới:</strong>
+                    <ul class="update-list-ul">
+                        <li>Hào quang (Aura) mới</li>
+                        <li>Danh hiệu: Thợ săn Titan (Titan Hunter)</li>
+                    </ul>
+                    <strong>Mở rộng giới hạn:</strong>
+                    <ul class="update-list-ul">
+                        <li>Cấp độ người chơi: 120 → 140</li>
+                        <li>Rank Up: +3 cấp</li>
+                        <li>Nâng cấp Yên: Sát thương (+5), Mastery (+5), Chí mạng (+5), Yên (+2).</li>
+                        <li>Nâng cấp Token: Sát thương (+5), Mastery (+5).</li>
+                    </ul>
+                    <strong>Cải thiện trải nghiệm (QOL):</strong>
+                    <ul class="update-list-ul">
+                        <li>Tab Độc quyền trong Mục lục (Index).</li>
+                        <li>Nút trang bị skin chỉ hiện cho vũ khí đã có.</li>
+                        <li>Tối ưu hóa tải khu vực quái vật gần.</li>
+                        <li>Thông báo chi tiết hơn.</li>
+                        <li>Làm lại một số hoạt ảnh vũ khí.</li>
+                    </ul>
+                    <strong>Sửa lỗi:</strong>
+                    <ul class="update-list-ul">
+                        <li>Phần thưởng Gacha không căn giữa chính xác.</li>
+                        <li>Lỗi không nhận được quà tuần ngày 7.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'patch_21_11',
+                title: 'Patch Update',
+                date: '21/11/2025',
+                content: `
+                    <strong>Sửa lỗi và Điều chỉnh:</strong>
+                    <ul class="update-list-ul">
+                        <li>Sửa và điều chỉnh tỷ lệ Gacha chính xác hơn.</li>
+                        <li>Tăng sức mạnh (Buff) cho Kiếm Độc quyền (Exclusive Sword).</li>
+                        <li>Sửa lại hoạt ảnh người chơi.</li>
+                        <li>Tăng chỉ số cộng thêm của Mắt Ma Thuật khi nâng cấp.</li>
+                        <li>Sửa nhiều lỗi nhỏ để cải thiện độ ổn định của game.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'release_pt3',
+                title: 'Release Pt.3',
+                date: '19/11/2025',
+                content: `
+                    <strong>Gacha Mới & Tính năng:</strong>
+                    <ul class="update-list-ul">
+                        <li><strong>Gacha Mắt Ma Thuật (Magic Eyes):</strong> Bạn có thể tiến hóa chúng!</li>
+                        <li><strong>VIP:</strong> Giảm giá 20% khi quay Gacha!</li>
+                        <li><strong>Gói Độc quyền:</strong> Avatar & Vũ khí mới! Tặng thêm +1 Danh hiệu.</li>
+                    </ul>
+                    <strong>Mở rộng Giới hạn:</strong>
+                    <ul class="update-list-ul">
+                        <li>+20 Cấp độ Người chơi (100 → 120).</li>
+                        <li>+5 Nâng cấp Yên (Yen Upgrades).</li>
+                        <li>+5 Thành tựu Mastery.</li>
+                        <li>+5 Thành tựu Sát thương.</li>
+                        <li>+3 Cấp Rank mới.</li>
+                    </ul>
+                    <strong>Cải thiện trải nghiệm (QOL):</strong>
+                    <ul class="update-list-ul">
+                        <li>Cập nhật & cải thiện Danh sách phát nhạc.</li>
+                        <li>Trang bị skin vũ khí theo số thứ tự (index).</li>
+                        <li>Cải thiện hiển thị DPS và các chỉ số phần trăm.</li>
+                        <li>Cải thiện Màn hình Dịch chuyển.</li>
+                        <li>Tính năng "Trang bị Tốt nhất" giờ sẽ dùng thuộc tính đã chọn trong Túi Sức mạnh.</li>
+                        <li>Thêm tùy chọn chỉ hiện Thông báo trong khung chat.</li>
+                    </ul>
+                    <strong>Sửa lỗi:</strong>
+                    <ul class="update-list-ul">
+                        <li>Sửa lỗi Gacha tự động dừng.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'patch_17_11', 
+                title: 'Patch Update',
+                date: '17/11/2025',
+                content: `
+                    <ul class="update-list-ul">
+                        <li>Hoàn tất di chuyển dữ liệu (Data Store Migration), tăng cường bảo vệ chống mất dữ liệu.</li>
+                        <li>Tối ưu hóa phản hồi cho Gacha và Sao, bao gồm cả xử lý kết nối lại.</li>
+                        <li>Thêm nhạc nền.</li>
+                        <li>Hiệu ứng quay Gacha Sao được điều chỉnh căn giữa chính xác với màn hình.</li>
+                        <li>Gacha giờ hiển thị đúng phần thưởng khi chuyển đổi qua lại.</li>
+                        <li>Chặn việc mở Gacha và Sao cùng một lúc.</li>
+                        <li>Sửa lỗi thưởng Thành tựu: Trang bị tối đa và Tỷ lệ rơi (Drops).</li>
+                        <li>Phần thưởng thời gian giờ sẽ reset hàng ngày đúng như dự kiến.</li>
+                        <li>Các chế độ chơi giờ đã hoạt động bình thường.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'release_pt2',
+                title: 'Release PT. 2',
+                date: '15/11/2025',
+                content: `
+                    <strong>Thêm chế độ chơi mới: Đột kích (Raids)!</strong>
+                    <ul class="update-list-ul">
+                        <li>Khu vực Raid nằm tại sảnh Dungeon!</li>
+                        <li>Bạn có thể nhận Sức mạnh Raid: mỗi 5 đợt hoàn thành có cơ hội rớt một cái!</li>
+                    </ul>
+                    <strong>Thêm Gacha mới!</strong>
+                    <ul class="update-list-ul">
+                        <li>Kiểm tra Gacha Trái cây tại Vùng đất Sa mạc!</li>
+                    </ul>
+                    <strong>Cải thiện trải nghiệm (QOL)!</strong>
+                    <ul class="update-list-ul">
+                        <li>Điều chỉnh bảo hiểm Legendary (100 > 150)!</li>
+                        <li>Thêm cài đặt Dừng nhận Quà!</li>
+                        <li>Sao giờ sẽ cộng dồn khi quay!</li>
+                        <li>Cải thiện thứ tự sắp xếp trong Kho!</li>
+                        <li>Hiển thị nhiệm vụ giờ có thêm độ hiếm!</li>
+                        <li>Cải thiện việc phân phối điểm chỉ số!</li>
+                    </ul>
+                    <strong>Sửa lỗi!</strong>
+                    <ul class="update-list-ul">
+                        <li>Thanh máu Emperor bị biến mất;</li>
+                        <li>Các gói hiển thị là "đã mua" trong cửa hàng dù chưa mua;</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'patch_14_11',
+                title: 'Patch Update',
+                date: '14/11/2025',
+                content: `
+                    <ul class="update-list-ul">
+                        <li>Sửa lỗi treo game khi vào Dungeon.</li>
+                        <li>Cân bằng lại sức mạnh Boss thế giới 1.</li>
+                        <li>Sửa lỗi hiển thị sai số liệu Mastery.</li>
+                    </ul>
+                `
+            },
+            {
+                id: 'game_release',
+                title: 'Game Release',
+                date: '14/11/2025',
+                content: 'Phát hành Game. Chúc các bạn chơi vui vẻ! Khám phá nhiều hòn đảo, hệ thống và thế giới khác nhau.'
+            }
+        ];
+
         // CONFIG
         const SCALING_FACTOR = 8.400;
         const BASE_COST_MAGNITUDE = 30; 
@@ -689,13 +1019,58 @@
             }
         }
 
+        // --- UPDATE LOGIC ---
+        function renderUpdateList() {
+            const container = document.getElementById('versionListContainer');
+            container.innerHTML = '';
+            UPDATE_DATA.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = `version-item ${index === 0 ? 'active' : ''}`; // Select first by default
+                el.onclick = () => selectUpdate(index);
+                el.innerHTML = `
+                    <div class="v-title">${item.title}</div>
+                    <div class="v-date">${item.date}</div>
+                `;
+                container.appendChild(el);
+            });
+            // Show first item content
+            if (UPDATE_DATA.length > 0) selectUpdate(0);
+        }
+
+        function selectUpdate(index) {
+            const items = document.querySelectorAll('.version-item');
+            items.forEach(i => i.classList.remove('active'));
+            if(items[index]) items[index].classList.add('active');
+
+            const data = UPDATE_DATA[index];
+            document.getElementById('displayUpTitle').innerText = data.title;
+            document.getElementById('displayUpDate').innerText = data.date;
+            document.getElementById('displayUpContent').innerHTML = data.content;
+        }
+
         // --- MAIN LOGIC ---
         window.handleInput = function(source) {
-            const activeTab = document.getElementById('rankTabBtn').classList.contains('active') ? 'rank' : 'mastery';
+            const activeTab = getActiveTab();
             if (activeTab === 'rank') window.calculateRank();
-            else window.calculateBoss();
+            else if (activeTab === 'mastery') window.calculateBoss();
             saveSettings();
         };
+
+        window.syncClickVal = function(val) {
+            document.getElementById('clickVal').value = val;
+            window.handleInput();
+        }
+        
+        window.syncClickUnit = function(val) {
+            document.getElementById('clickUnit').value = val;
+            window.handleInput();
+        }
+
+        function getActiveTab() {
+            if (document.getElementById('rankTabBtn').classList.contains('active')) return 'rank';
+            if (document.getElementById('masteryTabBtn').classList.contains('active')) return 'mastery';
+            return 'updates';
+        }
 
         window.syncTargetRank = function() {
             let cr = parseInt(document.getElementById('currentRank').value) || 0;
@@ -711,18 +1086,35 @@
         };
 
         window.showSection = function(sectionId, shouldSave = true) {
-            const isRank = sectionId === 'rank';
-            document.getElementById('rankTabBtn').classList.toggle('active', isRank);
-            document.getElementById('masteryTabBtn').classList.toggle('active', !isRank);
+            // Reset all tabs
+            document.getElementById('rankTabBtn').classList.remove('active');
+            document.getElementById('masteryTabBtn').classList.remove('active');
+            document.getElementById('updateTabBtn').classList.remove('active');
             
-            document.getElementById('rankInputs').classList.toggle('hidden', !isRank);
-            document.getElementById('masteryInputs').classList.toggle('hidden', isRank);
+            document.getElementById('rankInputs').classList.add('hidden');
+            document.getElementById('masteryInputs').classList.add('hidden');
+            document.getElementById('updateInputs').classList.add('hidden');
             
-            document.getElementById('rankOutput').classList.toggle('hidden', !isRank);
-            document.getElementById('masteryOutput').classList.toggle('hidden', isRank);
-            
-            if(isRank) window.calculateRank();
-            else window.calculateBoss();
+            document.getElementById('rankOutput').classList.add('hidden');
+            document.getElementById('masteryOutput').classList.add('hidden');
+            document.getElementById('updateOutput').classList.add('hidden');
+
+            // Activate specific
+            if (sectionId === 'rank') {
+                document.getElementById('rankTabBtn').classList.add('active');
+                document.getElementById('rankInputs').classList.remove('hidden');
+                document.getElementById('rankOutput').classList.remove('hidden');
+                window.calculateRank();
+            } else if (sectionId === 'mastery') {
+                document.getElementById('masteryTabBtn').classList.add('active');
+                document.getElementById('masteryInputs').classList.remove('hidden');
+                document.getElementById('masteryOutput').classList.remove('hidden');
+                window.calculateBoss();
+            } else if (sectionId === 'updates') {
+                document.getElementById('updateTabBtn').classList.add('active');
+                document.getElementById('updateInputs').classList.remove('hidden');
+                document.getElementById('updateOutput').classList.remove('hidden');
+            }
             
             if(shouldSave) saveSettings();
         };
@@ -732,11 +1124,7 @@
             const startRank = parseInt(document.getElementById('currentRank').value) || 0;
             const endRank = parseInt(document.getElementById('targetRank').value) || 1;
             const clickVal = getRawVal('clickVal', 'clickUnit');
-            
-            // Lấy giá trị Mastery đang có
             const currentMastery = getRawVal('currentMasteryVal', 'currentMasteryUnit');
-
-            // document.getElementById('rankRange').innerText = `${startRank} → ${endRank}`;
 
             if (startRank >= endRank) {
                 document.getElementById('totalCostDisplay').innerText = "---";
@@ -749,7 +1137,6 @@
                 if (RANK_COSTS[i]) totalCost += RANK_COSTS[i];
             }
             
-            // Trừ đi mastery đã có
             let remainingCost = totalCost - currentMastery;
             if (remainingCost < 0) remainingCost = 0;
 
@@ -758,11 +1145,9 @@
             const dpsAuto = clickVal * CPS_AUTO;
             const dpsNor = clickVal * CPS_NOR;
 
-            // Cập nhật Fast & Nor (đã bỏ /s)
             document.getElementById('dpsDisplay').innerText = formatNumber(dpsAuto);
             document.getElementById('dpsNorDisplay').innerText = formatNumber(dpsNor);
             
-            // Tính thời gian dựa trên remainingCost
             const timeAuto = dpsAuto > 0 ? remainingCost / dpsAuto : 0;
             const timeNor = dpsNor > 0 ? remainingCost / dpsNor : 0;
 
@@ -774,7 +1159,7 @@
         window.calculateBoss = function() {
             const bossHp = getRawVal('bossHpVal', 'bossHpUnit');
             const damage = getRawVal('damageVal', 'damageUnit'); 
-            const mastery = getRawVal('clickVal', 'clickUnit'); 
+            const mastery = getRawVal('clickVal', 'clickUnit'); // Using the shared input (or dup)
 
             // 1. BOSS TIME
             const dpsDamageAuto = damage * CPS_AUTO;
@@ -807,10 +1192,12 @@
         // --- INITIALIZATION & FIREBASE ---
         function initUI() {
             buildRankCosts();
-            // Đã thêm 'currentMasteryUnit' vào
-            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit'];
+            renderUpdateList(); // New
+
+            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit', 'clickUnitDup'];
             unitSelects.forEach(id => {
                 const el = document.getElementById(id);
+                if(!el) return;
                 el.innerHTML = '';
                 UNITS.forEach((u, index) => {
                     const opt = document.createElement('option');
@@ -820,16 +1207,18 @@
                     el.appendChild(opt);
                 });
             });
+
+            // Sync dup inputs
+            document.getElementById('clickUnitDup').value = document.getElementById('clickUnit').value;
+            document.getElementById('clickValDup').value = document.getElementById('clickVal').value;
         }
 
         async function saveSettings() {
             if (!userId || !db) return;
             const settings = {
-                activeTab: document.getElementById('rankTabBtn').classList.contains('active') ? 'rank' : 'mastery',
-                
+                activeTab: getActiveTab(),
                 currentMasteryVal: document.getElementById('currentMasteryVal').value,
                 currentMasteryUnit: document.getElementById('currentMasteryUnit').value,
-                
                 clickVal: document.getElementById('clickVal').value,
                 clickUnit: document.getElementById('clickUnit').value,
                 damageVal: document.getElementById('damageVal').value,
@@ -858,6 +1247,11 @@
                     
                     document.getElementById('clickVal').value = s.clickVal || '0';
                     document.getElementById('clickUnit').value = s.clickUnit || '1';
+                    
+                    // Sync Dup Inputs
+                    document.getElementById('clickValDup').value = s.clickVal || '0';
+                    document.getElementById('clickUnitDup').value = s.clickUnit || '1';
+
                     document.getElementById('damageVal').value = s.damageVal || '0';
                     document.getElementById('damageUnit').value = s.damageUnit || '1';
                     document.getElementById('currentRank').value = s.currentRank || '0';
@@ -892,8 +1286,32 @@
         window.showSection = showSection;
         window.calculateRank = calculateRank;
         window.calculateBoss = calculateBoss;
+        window.selectUpdate = selectUpdate;
+        window.syncClickVal = syncClickVal;
+        window.syncClickUnit = syncClickUnit;
 
         window.onload = () => { initUI(); setupFirebase(); };
+    </script>
+    <!-- Add anti-f12 script here -->
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { // F12
+                return false;
+            }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+                return false;
+            }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { // Ctrl+Shift+C
+                return false;
+            }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+                return false;
+            }
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
+                return false;
+            }
+        }
     </script>
 </body>
 </html>
