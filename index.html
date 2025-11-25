@@ -24,17 +24,23 @@
             --font-sans: 'Inter', sans-serif;
             --bg-update-item: #151515;
             --bg-update-active: #2962ff;
+            
+            /* --- MÀU RIÊNG CHO TỪNG TAB --- */
+            --col-rank: #2962ff;      /* Rank: Xanh dương */
+            --col-mastery: #ff5722;   /* Mastery: Cam đỏ */
+            --col-gacha: #d500f9;     /* Gacha: Tím */
+            --col-raid: #ffeb3b;      /* Raid: Vàng */
+            --col-update: #00e676;    /* Update: Xanh lá */
         }
 
         * { box-sizing: border-box; outline: none; }
 
-        /* Chặn bôi đen văn bản để hạn chế copy */
         body {
             background-color: var(--bg-app);
             color: var(--text-primary);
             font-family: var(--font-sans);
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px; 
             display: flex;
             flex-direction: column; 
             align-items: center;    
@@ -50,68 +56,128 @@
             user-select: text;
         }
 
+        /* --- LAYOUT MỚI: FLEX COLUMN --- */
         .app-container {
-            display: grid;
-            grid-template-columns: 340px 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 24px;
             max-width: 1200px;
             width: 100%;
             flex: 1; 
         }
 
-        /* --- CỘT TRÁI (ĐIỀU KHIỂN) --- */
+        /* --- HEADER (CENTERED WITH ICON - FINAL STYLE) --- */
+        .brand-header { 
+            display: flex;
+            flex-direction: column; /* Xếp dọc */
+            align-items: center;    /* Căn giữa */
+            text-align: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .brand-logo {
+            width: 80px; 
+            height: 80px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(41, 98, 255, 0.15);
+            border: 1px solid #333;
+            transition: transform 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .brand-logo:hover { transform: scale(1.05) rotate(2deg); }
+        
+        .brand-title {
+            font-family: var(--font-sans); 
+            font-size: 28px; 
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .title-icon { font-size: 24px; opacity: 0.8; margin-right: 2px; }
+        .brand-title span { color: var(--accent-primary); } 
+        
+        .brand-subtitle {
+            font-size: 14px; /* Tăng size chữ lên xíu */
+            color: var(--text-secondary);
+            font-weight: 600; /* Đậm hơn */
+            font-family: var(--font-sans);
+        }
+
+        /* --- NAV BAR (NẰM NGANG Ở TRÊN) --- */
+        .nav-tabs-container {
+            background: #0a0a0a; 
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative; 
+            z-index: 10;
+        }
+
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #555; 
+            padding: 14px;
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            white-space: nowrap;
+            letter-spacing: 1px;
+        }
+
+        .nav-btn:hover { 
+            color: #fff; 
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        /* Active States với màu riêng biệt */
+        #rankTabBtn.active { background-color: var(--col-rank); color: #fff; box-shadow: 0 4px 15px rgba(41, 98, 255, 0.3); }
+        #masteryTabBtn.active { background-color: var(--col-mastery); color: #fff; box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3); }
+        #gachaTabBtn.active { background-color: var(--col-gacha); color: #fff; box-shadow: 0 4px 15px rgba(213, 0, 249, 0.3); }
+        #raidTabBtn.active { background-color: var(--col-raid); color: #000; box-shadow: 0 4px 15px rgba(255, 235, 59, 0.3); }
+        #updateTabBtn.active { background-color: var(--col-update); color: #000; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3); }
+
+        /* --- CONTENT GRID (CHỨA 2 CỘT DƯỚI) --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 24px;
+            width: 100%;
+        }
+
         .left-panel {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Cập nhật Brand Header để chứa Logo ảnh */
-        .brand-header { 
-            margin-bottom: 20px; 
+        .right-panel {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Căn giữa logo và chữ */
-            text-align: center;
-        }
-        
-        /* Style cho Logo ảnh */
-        .brand-logo {
-            width: 100px;
-            height: 100px;
-            object-fit: cover; /* Đảm bảo ảnh không bị méo */
-            border-radius: 20px; /* Bo góc mềm mại */
-            margin-bottom: 15px;
-            box-shadow: 0 8px 30px rgba(41, 98, 255, 0.2); /* Đổ bóng xanh nhẹ */
-            border: 2px solid #222;
-            transition: transform 0.3s ease;
+            gap: 24px;
         }
 
-        .brand-logo:hover {
-            transform: scale(1.05) rotate(2deg); /* Hiệu ứng nhẹ khi di chuột vào logo */
-        }
-        
-        .brand-title {
-            font-family: var(--font-mono);
-            font-size: 22px; /* Tăng size chữ lên xíu */
-            font-weight: 800;
-            color: #fff;
-            margin: 0;
-            letter-spacing: -0.5px;
-            line-height: 1.3;
-        }
-        .brand-title span { color: var(--accent-primary); }
-        
-        .brand-subtitle {
-            font-size: 12px; 
-            color: var(--text-secondary);
-            margin-top: 6px;
-            font-weight: 500;
-            line-height: 1.4;
-            max-width: 280px; /* Giới hạn chiều rộng để xuống dòng đẹp hơn */
-        }
-
-        /* --- CARD GLOW EFFECT CSS --- */
+        /* --- COMMON CARD STYLES --- */
         .card-glow {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -119,412 +185,130 @@
             position: relative;
         }
 
-        /* Hiệu ứng Spotlight Border */
         .card-glow::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: inherit;
-            padding: 1.5px; 
-            background: radial-gradient(
-                600px circle at var(--mouse-x) var(--mouse-y),
-                var(--accent-glow),
-                transparent 40%
-            );
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            z-index: 2;
-            pointer-events: none;
-            opacity: 0; 
-            transition: opacity 0.3s ease;
+            content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), var(--accent-glow), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            z-index: 2; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
         }
-
-        .card-glow:hover::before {
-            opacity: 1;
-        }
+        .card-glow:hover::before { opacity: 1; }
         
-        .card-glow::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(
-                600px circle at var(--mouse-x) var(--mouse-y),
-                rgba(41, 98, 255, 0.05),
-                transparent 40%
-            );
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .card-glow:hover::after {
-            opacity: 1;
-        }
-
-        /* --- Specific Card Styles --- */
-
         .control-card {
-            padding: 20px;
+            padding: 24px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            max-height: 80vh;
-            overflow-y: auto;
             z-index: 1; 
-        }
-        
-        .control-card::-webkit-scrollbar { width: 6px; }
-        .control-card::-webkit-scrollbar-track { background: var(--bg-card); }
-        .control-card::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-
-        /* Tabs Styling */
-        .nav-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            background: #050505;
-            padding: 4px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 24px;
-            position: relative; 
-            z-index: 5; 
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            padding: 10px 5px;
-            font-family: var(--font-sans);
-            font-weight: 700;
-            font-size: 11px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .nav-btn:hover { color: #fff; }
-
-        .nav-btn.active {
-            background-color: var(--accent-primary);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(41, 98, 255, 0.2);
         }
 
         /* Inputs Styling */
-        .control-section { margin-bottom: 20px; position: relative; z-index: 5; }
+        .control-section { margin-bottom: 20px; }
+        .control-section:last-child { margin-bottom: 0; }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .label-text { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;}
+        .label-text::before { content:''; width: 4px; height: 4px; background: var(--accent-text); display: inline-block; border-radius: 50%; }
 
-        .label-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .input-row { display: flex; gap: 10px; align-items: center; }
         .input-wrapper {
-            background-color: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0 12px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            width: 100%;
+            background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 0 12px; height: 48px; display: flex; align-items: center; width: 100%;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        .input-wrapper:focus-within { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-glow); }
 
-        .input-wrapper:focus-within { 
-            border-color: var(--accent-primary); 
-            box-shadow: 0 0 0 1px var(--accent-glow);
-        }
-
-        input, select {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-family: var(--font-mono);
-            font-size: 14px;
-            width: 100%;
-            height: 100%;
-        }
-        
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-        select {
-            color: var(--accent-text);
-            font-weight: 700;
-            text-align: right;
-            cursor: pointer;
-            min-width: 60px;
-        }
+        input, select { background: transparent; border: none; color: #fff; font-family: var(--font-mono); font-size: 15px; width: 100%; height: 100%; }
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        select { color: var(--accent-text); font-weight: 700; text-align: right; cursor: pointer; min-width: 60px; }
         select option { background-color: #000; color: #fff; }
 
-        .time-input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+        .time-input-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+        .spin-mode-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
+        .spin-btn {
+            background: var(--bg-input); border: 1px solid var(--border-color); color: #666; padding: 12px;
+            border-radius: 10px; font-family: var(--font-mono); font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .spin-btn:hover { color: #fff; border-color: #444; }
+        .spin-btn.active {
+            background: rgba(213, 0, 249, 0.1); border-color: var(--col-gacha); color: var(--col-gacha);
+            box-shadow: 0 0 15px rgba(213, 0, 249, 0.1);
         }
 
-        /* --- UPDATE LOGS STYLING --- */
-        .version-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .version-item {
-            padding: 15px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            z-index: 1;
-        }
-
-        .version-item:hover {
-            transform: translateY(-1px);
-        }
-
-        .version-item.active {
-            border-color: var(--accent-primary);
-            background: linear-gradient(90deg, rgba(41,98,255,0.1) 0%, rgba(0,0,0,0) 100%);
-        }
+        /* Version List & Raid List */
+        .version-list, .raid-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .version-list::-webkit-scrollbar, .raid-list::-webkit-scrollbar { width: 4px; }
+        .version-list::-webkit-scrollbar-thumb, .raid-list::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
         
-        .version-item.active .active-indicator {
-            position: absolute;
-            left: 0; top: 0; bottom: 0; width: 4px;
-            background-color: var(--accent-primary);
-            border-radius: 4px 0 0 4px;
-        }
+        .version-item { padding: 15px; cursor: pointer; transition: transform 0.2s ease; z-index: 1; border-radius: 12px; border: 1px solid var(--border-color); background: #111; }
+        .version-item:hover { transform: translateX(2px); border-color: #444; }
+        .version-item.active { border-color: var(--col-update); background: linear-gradient(90deg, rgba(0, 230, 118, 0.05) 0%, rgba(0,0,0,0) 100%); }
+        .v-title { font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 4px; }
+        .v-date { font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); }
 
-        .v-title {
-            font-weight: 700;
-            font-size: 14px;
-            color: #fff;
-            margin-bottom: 4px;
-            position: relative; z-index: 2;
+        /* Raid Table Styles */
+        .raid-table-container {
+            height: 500px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px; background: #0a0a0a; overflow-x: auto;
         }
-        .v-date {
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            position: relative; z-index: 2;
+        .raid-table { width: 100%; border-collapse: collapse; min-width: 500px; /* Đảm bảo bảng không bị co quá nhỏ */ }
+        .raid-table th { 
+            position: sticky; top: 0; background: #151515; color: var(--col-raid); 
+            padding: 12px; font-size: 12px; text-align: right; z-index: 2; 
+            border-bottom: 1px solid #333; white-space: nowrap;
         }
+        .raid-table th:first-child { text-align: left; }
+        .raid-table td { 
+            padding: 10px 12px; border-bottom: 1px solid #222; 
+            font-family: var(--font-mono); font-size: 13px; color: #ddd; text-align: right;
+        }
+        .raid-table td:first-child { text-align: left; color: var(--col-raid); font-weight: 700; }
+        .raid-table tr:hover { background: rgba(255, 235, 59, 0.05); }
+        .raid-hl { color: var(--col-raid); font-weight: bold; }
+        .val-fast { color: var(--accent-text); }
+        .val-nor { color: #888; }
 
-        /* --- CỘT PHẢI (HIỂN THỊ) --- */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* Big Timer Card */
+        /* Timer Card */
         .timer-card {
-            padding: 40px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            min-height: 240px;
-            --accent-glow: rgba(41, 98, 255, 0.8); 
+            padding: 40px; text-align: center; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            min-height: 220px; --accent-glow: rgba(41, 98, 255, 0.8); 
         }
-
-        .timer-label {
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            font-weight: 700;
-            z-index: 2;
-        }
-
-        .big-time {
-            font-family: var(--font-mono);
-            font-size: 64px;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(41, 98, 255, 0.4);
-            line-height: 1.1;
-            margin-bottom: 12px;
-            z-index: 2;
-        }
-        
+        .timer-label { font-size: 12px; letter-spacing: 2px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 16px; font-weight: 700; }
+        .big-time { font-family: var(--font-mono); font-size: 64px; font-weight: 700; color: #fff; text-shadow: 0 0 30px rgba(41, 98, 255, 0.3); line-height: 1; margin-bottom: 16px; }
         .time-unit { font-size: 0.5em; color: var(--text-secondary); font-weight: 400; margin-right: 6px;}
-
-        .sub-info {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text-secondary);
-            background: rgba(255,255,255,0.05);
-            padding: 6px 12px;
-            border-radius: 20px;
-            z-index: 2;
-        }
+        .sub-info { font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; }
         .highlight { color: var(--accent-text); font-weight: bold; margin-left: 5px; }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        /* STAT CARD DESIGN */
-        .stat-card {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 150px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            z-index: 1;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-        }
-        
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-            position: relative; z-index: 2;
-        }
-
-        .stat-title {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            max-width: 85%;
-            line-height: 1.4;
-        }
-        
-        .stat-icon { font-size: 18px; color: #fff; opacity: 0.7; }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            position: relative; z-index: 2;
-        }
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .stat-card { padding: 24px; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; }
+        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .stat-title { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .stat-icon { font-size: 18px; opacity: 0.7; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .stat-row:last-child { margin-bottom: 0; }
-
-        .stat-col-val { text-align: left; }
-        .stat-value-sm {
-            font-family: var(--font-mono);
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1.2;
-        }
+        .stat-value-sm { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #fff; }
         .stat-label-sm { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-        
         .accent-fast { color: var(--accent-text); }
-        .accent-nor { color: #aaa; }
+        .accent-nor { color: #888; }
+        .stat-value { font-family: var(--font-mono); font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1; }
+        .stat-sub { font-size: 12px; color: var(--text-secondary); }
 
-        .stat-value {
-            font-family: var(--font-mono);
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-            word-break: break-all;
-            margin-bottom: 8px;
-            line-height: 1.1;
-            position: relative; z-index: 2;
-        }
-
-        .stat-sub {
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-family: var(--font-sans);
-            position: relative; z-index: 2;
-        }
-
-        /* --- UPDATE DETAILS --- */
-        .update-card {
-            padding: 0;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            min-height: 400px;
-        }
-
-        .update-header-box {
-            background: #111;
-            padding: 24px 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative; z-index: 2;
-        }
-        
-        .up-title { font-family: var(--font-mono); font-size: 24px; font-weight: 800; color: #fff; }
-
-        .up-date {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            color: var(--accent-text);
-            background: rgba(41, 98, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 8px;
-        }
-
-        .update-content {
-            padding: 30px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: #e0e0e0;
-            position: relative; z-index: 2;
-        }
-
+        /* Update Details */
+        .update-card { padding: 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); min-height: 400px; display: flex; flex-direction: column; }
+        .update-header-box { background: #111; padding: 24px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .up-title { font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: #fff; }
+        .up-date { font-family: var(--font-mono); font-size: 13px; color: var(--col-update); background: rgba(0, 230, 118, 0.1); padding: 6px 12px; border-radius: 8px; font-weight: 700;}
+        .update-content { padding: 30px; font-size: 14px; line-height: 1.8; color: #ddd; flex: 1; }
         .update-list-ul { list-style: none; padding: 0; margin: 0; }
-        .update-list-ul li { position: relative; padding-left: 20px; margin-bottom: 12px; }
-        .update-list-ul li::before {
-            content: '-';
-            position: absolute;
-            left: 0;
-            color: var(--accent-text);
-            font-weight: bold;
-        }
+        .update-list-ul li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+        .update-list-ul li::before { content: '-'; position: absolute; left: 0; color: var(--col-update); font-weight: bold; }
 
-        .footer {
-            margin-top: 60px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            padding-bottom: 20px;
-            font-weight: 500;
-            font-family: var(--font-mono);
-        }
+        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #444; font-family: var(--font-mono); }
 
         @media (max-width: 850px) {
-            .app-container { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; }
+            .nav-tabs { grid-template-columns: 1fr 1fr; }
+            .brand-header { justify-content: center; }
             .big-time { font-size: 48px; }
         }
         
@@ -535,249 +319,296 @@
 
     <div class="app-container">
         
-        <!-- === CỘT TRÁI: ĐIỀU KHIỂN & DANH SÁCH CẬP NHẬT === -->
-        <div class="left-panel">
-            <div class="brand-header">
-                <!-- HÌNH ẢNH LOGO -->
-                <img src="favicon.png" alt="Anime Shutdown Logo" class="brand-logo">
-                <h1 class="brand-title">⚔️ Anime Weapons <span>Calc</span></h1>
-                <div class="brand-subtitle">Công cụ tính toán Sát thương, Mastery và Rank</div>
-            </div>
+        <!-- 1. HEADER -->
+        <div class="brand-header">
+            <img src="favicon.png" alt="Logo" class="brand-logo">
+            <h1 class="brand-title">
+                <span class="title-icon">⚔️</span> 
+                Anime Weapons 
+                <span>Calc</span>
+            </h1>
+            <div class="brand-subtitle">Công cụ tính toán mọi thứ có trong Anime Weapons</div>
+        </div>
 
-            <!-- Thêm class card-glow -->
-            <div class="control-card card-glow">
-                <!-- TABS -->
-                <div class="nav-tabs">
-                    <button class="nav-btn active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
-                    <button class="nav-btn" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss/Mastery</button>
-                    <button class="nav-btn" id="updateTabBtn" onclick="window.showSection('updates')">Cập nhật</button>
-                </div>
-
-                <!-- 1. RANK INPUTS -->
-                <div id="rankInputs">
-                    <div class="control-section">
-                        <div class="section-header">
-                            <span class="label-text">RANK (0-100)</span>
-                        </div>
-                        <div class="input-row">
-                            <div class="input-wrapper" style="flex:1;">
-                                <span style="color:#666; margin-right:5px;">Hiện tại</span>
-                                <input type="number" id="currentRank" min="0" max="100" value="0" oninput="window.syncTargetRank()">
-                            </div>
-                            <div class="input-wrapper" style="flex:1;">
-                                <span style="color:#666; margin-right:5px;">Mục tiêu</span>
-                                <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NEW: MASTERY HIỆN TẠI -->
-                    <div class="control-section">
-                        <div class="section-header">
-                            <span class="label-text">MASTERY ĐANG CÓ</span>
-                        </div>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')">
-                                <select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- COMMON INPUT: MASTERY PER CLICK -->
-                     <div class="control-section">
-                        <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')">
-                                <select id="clickUnit" onchange="window.handleInput('clickUnit')"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. BOSS INPUTS (Ẩn mặc định) -->
-                <div id="masteryInputs" class="hidden">
-                    <!-- BOSS HP -->
-                    <div class="control-section">
-                        <div class="section-header"><span class="label-text">MÁU BOSS (HP)</span></div>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <input type="number" id="bossHpVal" placeholder="0" oninput="window.handleInput('bossHpVal')">
-                                <select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')"></select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- CLICK DAMAGE -->
-                    <div class="control-section">
-                        <div class="section-header"><span class="label-text">SÁT THƯƠNG CLICK (DAMAGE)</span></div>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <input type="number" id="damageVal" placeholder="0" oninput="window.handleInput('damageVal')">
-                                <select id="damageUnit" onchange="window.handleInput('damageUnit')"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TIME -->
-                    <div class="control-section">
-                        <div class="section-header"><span class="label-text">THỜI GIAN CÀY MASTERY</span></div>
-                        <div class="time-input-group">
-                            <div class="input-wrapper"><input type="number" id="timeHours" placeholder="Giờ" oninput="window.handleInput('timeHours')"></div>
-                            <div class="input-wrapper"><input type="number" id="timeMinutes" placeholder="Phút" oninput="window.handleInput('timeMinutes')"></div>
-                            <div class="input-wrapper"><input type="number" id="timeSeconds" placeholder="Giây" oninput="window.handleInput('timeSeconds')"></div>
-                        </div>
-                    </div>
-
-                    <!-- REPEAT COMMON INPUT FOR UX -->
-                     <div class="control-section">
-                        <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
-                        <div class="input-row">
-                            <div class="input-wrapper">
-                                <input type="number" id="clickValDup" placeholder="0" oninput="window.syncClickVal(this.value)">
-                                <select id="clickUnitDup" onchange="window.syncClickUnit(this.value)"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. UPDATE LOGS LIST (New) -->
-                <div id="updateInputs" class="hidden">
-                     <div class="section-header" style="margin-bottom:15px;">
-                        <span class="label-text">DANH SÁCH PHIÊN BẢN</span>
-                    </div>
-                    <div class="version-list" id="versionListContainer">
-                        <!-- JS will inject items here -->
-                    </div>
-                </div>
-
+        <!-- 2. NAV BAR -->
+        <div class="nav-tabs-container card-glow">
+            <div class="nav-tabs">
+                <button class="nav-btn active" id="rankTabBtn" onclick="window.showSection('rank')">Rank</button>
+                <button class="nav-btn" id="masteryTabBtn" onclick="window.showSection('mastery')">Boss/Mastery</button>
+                <button class="nav-btn" id="gachaTabBtn" onclick="window.showSection('gacha')">Gacha</button>
+                <button class="nav-btn" id="raidTabBtn" onclick="window.showSection('raid')">Raid</button>
+                <button class="nav-btn" id="updateTabBtn" onclick="window.showSection('updates')">Cập nhật</button>
             </div>
         </div>
 
-        <!-- === CỘT PHẢI: HIỂN THỊ KẾT QUẢ === -->
-        <div class="right-panel">
+        <!-- 3. CONTENT GRID -->
+        <div class="content-grid">
             
-            <!-- KẾT QUẢ: RANK TAB -->
-            <div id="rankOutput">
-                <!-- 1. BIG TIMER -->
-                <div class="timer-card card-glow">
-                    <div class="timer-label">THỜI GIAN CÒN LẠI (FAST 6.7X)</div>
-                    <div class="big-time" id="mainTimerDisplay">0<span class="time-unit">s</span></div>
-                    <div class="sub-info">
-                        Nor (5x): <span class="highlight" id="subTimerDisplay">0s</span>
-                    </div>
-                </div>
-
-                <!-- 2. STATS -->
-                <div class="stats-grid">
-                    <div class="stat-card card-glow" style="justify-content: center;">
-                        <div class="stat-header" style="border:none; margin-bottom:5px;">
-                            <div class="stat-title">TỔNG MASTERY CẦN</div>
-                            <div class="stat-icon">⚔️</div>
-                        </div>
-                        <div class="stat-value" style="font-size: 36px;" id="totalCostDisplay">0</div>
-                        <div class="stat-sub">Đã trừ số đang có</div>
-                    </div>
-
-                    <div class="stat-card card-glow">
-                        <div class="stat-header">
-                            <div class="stat-title">TỐC ĐỘ MASTERY</div>
-                            <div class="stat-icon">✨</div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-fast" id="dpsDisplay">0</div>
-                                <div class="stat-label-sm">Fast (6.7x)</div>
+            <!-- === CỘT TRÁI: NHẬP LIỆU === -->
+            <div class="left-panel">
+                <div class="control-card card-glow">
+                    
+                    <!-- RANK INPUTS -->
+                    <div id="rankInputs">
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">RANK HIỆN TẠI</span></div>
+                            <div class="input-wrapper">
+                                <input type="number" id="currentRank" min="0" max="100" value="0" oninput="window.syncTargetRank()">
                             </div>
                         </div>
-                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-nor" id="dpsNorDisplay">0</div>
-                                <div class="stat-label-sm">Nor (5.0x)</div>
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">RANK MỤC TIÊU</span></div>
+                            <div class="input-wrapper">
+                                <input type="number" id="targetRank" min="1" max="100" value="1" oninput="window.calculate(); window.handleInput()">
+                            </div>
+                        </div>
+                        <!-- COMMON INPUTS FOR RANK -->
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')">
+                                    <select id="clickUnit" onchange="window.handleInput('clickUnit')"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">MASTERY ĐANG CÓ</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')">
+                                    <select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- RANK NOTE (LARGER FONT) -->
+                        <div style="font-size:13px; color:#aaa; margin-top:15px; font-style:italic; text-align:center; line-height:1.5; font-weight:600;">
+                            *Chỉ là xấp sỉ có thể sai số.<br>Mỗi rank sẽ cách nhau 8.4 lần.
+                        </div>
+                    </div>
+
+                    <!-- MASTERY INPUTS -->
+                    <div id="masteryInputs" class="hidden">
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">MÁU BOSS (HP)</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="bossHpVal" placeholder="0" oninput="window.handleInput('bossHpVal')">
+                                    <select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">SÁT THƯƠNG CLICK</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="damageVal" placeholder="0" oninput="window.handleInput('damageVal')">
+                                    <select id="damageUnit" onchange="window.handleInput('damageUnit')"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">THỜI GIAN CÀY</span></div>
+                            <div class="time-input-group">
+                                <div class="input-wrapper"><input type="number" id="timeHours" placeholder="Giờ" oninput="window.handleInput('timeHours')"></div>
+                                <div class="input-wrapper"><input type="number" id="timeMinutes" placeholder="Phút" oninput="window.handleInput('timeMinutes')"></div>
+                                <div class="input-wrapper"><input type="number" id="timeSeconds" placeholder="Giây" oninput="window.handleInput('timeSeconds')"></div>
+                            </div>
+                        </div>
+                        <!-- COMMON DUPLICATE -->
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="clickValDup" placeholder="0" oninput="window.syncClickVal(this.value)">
+                                    <select id="clickUnitDup" onchange="window.syncClickUnit(this.value)"></select>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- GACHA INPUTS (SIMPLIFIED) -->
+                    <div id="gachaInputs" class="hidden">
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">TỔNG SHARDS (MẢNH)</span></div>
+                            <div class="input-row">
+                                <div class="input-wrapper">
+                                    <input type="number" id="gachaShardsVal" placeholder="0" oninput="window.calculateGacha()">
+                                    <select id="gachaShardsUnit" onchange="window.calculateGacha()"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text">CHẾ ĐỘ QUAY</span></div>
+                            <div class="spin-mode-group">
+                                <button class="spin-btn active" id="spin1x" onclick="window.setSpinMode(1)">1x Spin</button>
+                                <button class="spin-btn" id="spin2x" onclick="window.setSpinMode(2)">2x Spin</button>
+                            </div>
+                            <div style="font-size:11px; color:#666; text-align:center; margin-top:5px;">Cơ bản: 1.5s / lượt</div>
+                        </div>
+                        <!-- ROOM 60S REMOVED COMPLETELY -->
+                    </div>
+
+                    <!-- RAID INPUTS -->
+                    <div id="raidInputs" class="hidden">
+                        <!-- CALCULATE SPECIFIC STAGE -->
+                        <div class="control-section">
+                            <div class="section-header"><span class="label-text" style="color:var(--col-raid);">TÍNH TOÁN ẢI CỤ THỂ</span></div>
+                            <div class="section-header"><span class="label-text">SỐ ẢI MUỐN CHỌN</span></div>
+                            <div class="input-wrapper">
+                                <input type="number" id="raidTargetStageInput" placeholder="Nhập số ải (Ví dụ: 180)" oninput="window.calculateRaidTarget()">
+                            </div>
+                             <!-- UPDATED NOTE -->
+                             <div style="font-size:13px; color:#aaa; margin-top:8px; font-style:italic; font-weight:600; text-align:center;">
+                                 *HP boss chỉ là xấp sỉ thôi nhé.<br>Mỗi 5 ải máu boss sẽ tăng 10.4 lần đi solo.
+                             </div>
+                        </div>
+
+                        <!-- RAID CONFIG (HIDDEN) -->
+                        <div class="control-section" style="display:none;"> 
+                            <div class="section-header"><span class="label-text">CẤU HÌNH CƠ BẢN</span></div>
+                            
+                            <div class="section-header"><span class="label-text" style="font-size:10px; color:#666;">MỐC THAM CHIẾU (REF)</span></div>
+                            <div class="input-wrapper" style="margin-bottom:10px;">
+                                <input type="number" id="raidRefStage" placeholder="Ví dụ: 100" value="100" oninput="window.calculateRaid()">
+                            </div>
+
+                            <div class="section-header"><span class="label-text" style="font-size:10px; color:#666;">HP THAM CHIẾU</span></div>
+                            <div class="input-row" style="margin-bottom:10px;">
+                                <div class="input-wrapper">
+                                    <input type="number" id="raidRefHpVal" placeholder="4" value="4" oninput="window.calculateRaid()">
+                                    <select id="raidRefHpUnit" onchange="window.calculateRaid()"></select>
+                                </div>
+                            </div>
+
+                            <div class="section-header"><span class="label-text" style="font-size:10px; color:#666;">TĂNG TRƯỞNG (MỖI 5 ẢI)</span></div>
+                            <div class="input-wrapper">
+                                <input type="number" id="raidGrowth" placeholder="10.4" value="10.4" oninput="window.calculateRaid()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPDATE LIST -->
+                    <div id="updateInputs" class="hidden">
+                        <div class="section-header"><span class="label-text">PHIÊN BẢN</span></div>
+                        <div class="version-list" id="versionListContainer">
+                            <!-- JS Injects here -->
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- KẾT QUẢ: BOSS & MASTERY TAB -->
-            <div id="masteryOutput" class="hidden">
-                <!-- 1. BIG TIMER (BOSS) -->
-                <div class="timer-card card-glow">
-                    <div class="timer-label">THỜI GIAN HẠ BOSS (FAST 6.7X)</div>
-                    <div class="big-time" id="bossTimerAuto">0<span class="time-unit">s</span></div>
-                    <div class="sub-info">
-                        Nor (5x): <span class="highlight" id="bossTimerNor">0s</span>
+            <!-- === CỘT PHẢI: KẾT QUẢ === -->
+            <div class="right-panel">
+                
+                <!-- RANK RESULTS -->
+                <div id="rankOutput">
+                    <div class="timer-card card-glow">
+                        <div class="timer-label">THỜI GIAN CÒN LẠI (FAST 6.7X)</div>
+                        <div class="big-time" id="mainTimerDisplay">0<span class="time-unit">s</span></div>
+                        <div class="sub-info">Nor (5x): <span class="highlight" id="subTimerDisplay">0s</span></div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card card-glow" style="justify-content:center;">
+                            <div class="stat-header" style="border:none; margin-bottom:5px;"><div class="stat-title">TỔNG MASTERY CẦN</div></div>
+                            <div class="stat-value" id="totalCostDisplay">0</div>
+                            <div class="stat-sub">Đã trừ số đang có</div>
+                        </div>
+                        <div class="stat-card card-glow">
+                            <div class="stat-header"><div class="stat-title">TỐC ĐỘ CÀY</div><div class="stat-icon">⚡</div></div>
+                            <div class="stat-row"><div class="stat-col-val"><div class="stat-value-sm accent-fast" id="dpsDisplay">0</div><div class="stat-label-sm">Fast (6.7x)</div></div></div>
+                            <div class="stat-row" style="border-top:1px dashed #333; padding-top:10px;"><div class="stat-col-val"><div class="stat-value-sm accent-nor" id="dpsNorDisplay">0</div><div class="stat-label-sm">Nor (5.0x)</div></div></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 2. STATS GRID -->
-                <div class="stats-grid">
-                    <div class="stat-card card-glow">
+                <!-- MASTERY RESULTS -->
+                <div id="masteryOutput" class="hidden">
+                    <div class="timer-card card-glow">
+                        <div class="timer-label">THỜI GIAN HẠ BOSS (FAST 6.7X)</div>
+                        <div class="big-time" id="bossTimerAuto">0<span class="time-unit">s</span></div>
+                        <div class="sub-info">Nor (5x): <span class="highlight" id="bossTimerNor">0s</span></div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card card-glow">
+                            <div class="stat-header"><div class="stat-title">THÔNG TIN BOSS</div><div class="stat-icon">🩸</div></div>
+                            <div class="stat-row"><div class="stat-col-val"><div class="stat-value-sm" id="bossHpDisplay">0</div><div class="stat-label-sm">Máu Boss</div></div></div>
+                            <div class="stat-row" style="border-top:1px dashed #333; padding-top:10px; margin-top:10px;"><div class="stat-col-val"><div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div><div class="stat-label-sm">DPS Fast (6.7x)</div></div></div>
+                        </div>
+                        <div class="stat-card card-glow">
+                            <div class="stat-header"><div class="stat-title">MASTERY ĐẠT ĐƯỢC</div><div class="stat-icon">📦</div></div>
+                            <div class="stat-row"><div class="stat-col-val"><div class="stat-value-sm accent-fast" id="masteryGainedDisplay">0</div><div class="stat-label-sm">Fast (6.7x)</div></div></div>
+                            <div class="stat-row" style="border-top:1px dashed #333; padding-top:10px; margin-top:10px;"><div class="stat-col-val"><div class="stat-value-sm accent-nor" id="masteryGainedNorDisplay">0</div><div class="stat-label-sm">Nor (5.0x)</div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GACHA RESULTS (SIMPLIFIED) -->
+                <div id="gachaOutput" class="hidden">
+                    <div class="timer-card card-glow" style="--accent-glow: rgba(213, 0, 249, 0.6);">
+                        <div class="timer-label">THỜI GIAN DỰ KIẾN</div>
+                        <div class="big-time" id="gachaTimerDisplay">0<span class="time-unit">s</span></div>
+                        <div class="sub-info">Mở <span class="highlight" id="gachaItemsDisplay">0</span> vật phẩm</div>
+                    </div>
+                    <!-- Removed Stat Grid (Total Rolls, Cycles, Room 60s) -->
+                </div>
+
+                <!-- RAID RESULTS -->
+                <div id="raidOutput" class="hidden">
+                    
+                    <!-- 1. TARGET RAID CARD -->
+                    <div class="stat-card card-glow" style="margin-bottom: 20px; border-color: var(--col-raid);">
                         <div class="stat-header">
-                            <div class="stat-title">THÔNG TIN BOSS</div>
-                            <div class="stat-icon">🩸</div>
+                            <div class="stat-title">KẾT QUẢ TÍNH TOÁN ẢI <span id="raidTargetStageDisplay" style="color:#fff;">---</span></div>
+                            <div class="stat-icon">🎯</div>
                         </div>
                         <div class="stat-row">
                             <div class="stat-col-val">
-                                <div class="stat-value-sm" id="bossHpDisplay">0</div>
-                                <div class="stat-label-sm">Mục tiêu Máu Boss</div>
+                                <div class="stat-value" id="raidTargetHpDisplay">0</div>
+                                <div class="stat-label-sm">Máu Boss Dự Kiến</div>
                             </div>
                         </div>
-                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
+
+                        <!-- UPDATED: ROW 1 - CLICK FAST & NOR -->
+                        <div class="stat-row" style="border-top:1px dashed #444; padding-top:12px; margin-top:12px;">
                             <div class="stat-col-val">
-                                <div class="stat-title" style="margin-bottom: 5px; color: var(--text-secondary);">SÁT THƯƠNG MỖI GIÂY</div>
+                                <div class="stat-value-sm accent-fast" id="raidTargetClickFast">0</div>
+                                <div class="stat-label-sm">1 Click (Fast 6.7x)</div>
                             </div>
-                        </div>
-                        <div class="stat-row">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div>
-                                <div class="stat-label-sm">Fast (6.7x)</div>
-                            </div>
-                        </div>
-                        <div class="stat-row" style="border-top:1px dashed #333; padding-top:5px;">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-nor" id="damageDpsNorDisplay">0</div>
-                                <div class="stat-label-sm">Nor (5.0x)</div>
+                            <div class="stat-col-val" style="text-align:right;">
+                                <div class="stat-value-sm accent-nor" id="raidTargetClickNor">0</div>
+                                <div class="stat-label-sm">1 Click (Nor 5.0x)</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="stat-card card-glow">
-                        <div class="stat-header">
-                            <div class="stat-title">MASTERY ĐẠT ĐƯỢC</div>
-                            <div class="stat-icon">📦</div>
+                    <!-- 2. RAID TABLE -->
+                    <div class="update-card card-glow">
+                        <div class="update-header-box">
+                            <div class="up-title" style="color:var(--col-raid);">Bảng tra cứu Raid Boss</div>
+                            <div class="up-date" style="background:rgba(255,235,59,0.1); color:var(--col-raid);">100+</div>
                         </div>
-                        <div class="stat-row">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-fast" id="masteryGainedDisplay">0</div>
-                                <div class="stat-label-sm">Fast (6.7x)</div>
-                            </div>
-                        </div>
-                        <div class="stat-row" style="margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
-                            <div class="stat-col-val">
-                                <div class="stat-value-sm accent-nor" id="masteryGainedNorDisplay">0</div>
-                                <div class="stat-label-sm">Nor (5.0x)</div>
-                            </div>
+                        <div class="raid-table-container">
+                            <table class="raid-table" id="raidTableBody">
+                                <!-- JS Injects rows here -->
+                            </table>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- KẾT QUẢ: UPDATE LOGS (New) -->
-            <div id="updateOutput" class="hidden">
-                <div class="update-card card-glow">
-                    <div class="update-header-box">
-                        <div class="up-title" id="displayUpTitle">Game Release</div>
-                        <div class="up-date" id="displayUpDate">14/11/2025</div>
-                    </div>
-                    <div class="update-content" id="displayUpContent">
-                        <!-- Content goes here -->
+                <!-- UPDATE LOGS RESULTS -->
+                <div id="updateOutput" class="hidden">
+                    <div class="update-card card-glow">
+                        <div class="update-header-box">
+                            <div class="up-title" id="displayUpTitle">Title</div>
+                            <div class="up-date" id="displayUpDate">Date</div>
+                        </div>
+                        <div class="update-content" id="displayUpContent">Content</div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
@@ -798,6 +629,7 @@
         let db, auth, userId = '';
         const userSettingsPath = `artifacts/${appId}/users/`;
         const settingsDocName = 'calculator_settings';
+        let spinMode = 1; 
         
         // --- DATA UPDATE LOGS ---
         const UPDATE_DATA = [
@@ -836,7 +668,7 @@
                         <li>Thuốc không hiển thị chỉ số cộng thêm trong túi đồ;</li>
                     </ul>
                     <br>
-                    <div style="font-weight:bold; color:var(--accent-text);">MỌI THAY ĐỔI CÓ SẴN TRONG PHIÊN BẢN 10500 HOẶC CAO HƠN</div>
+                    <div style="font-weight:bold; color:var(--col-update);">MỌI THAY ĐỔI CÓ SẴN TRONG PHIÊN BẢN 10500 HOẶC CAO HƠN</div>
                 `
             },
             {
@@ -1019,7 +851,12 @@
             { name: 'Td', exp: 42 }, { name: 'Qad', exp: 45 }, { name: 'Qid', exp: 48 }, { name: 'Sxd', exp: 51 }, { name: 'Spd', exp: 54 }, 
             { name: 'Ocd', exp: 57 }, { name: 'Nod', exp: 60 }, { name: 'Dec', exp: 63 }, { name: 'Und', exp: 66 }, { name: 'Duo', exp: 69 },
             { name: 'Tri', exp: 72 }, { name: 'Qua', exp: 75 }, { name: 'Qui', exp: 78 }, { name: 'Six', exp: 81 }, 
-            { name: 'Sep', exp: 84 }, { name: 'Oct', exp: 87 }, { name: 'Nuo', exp: 90 }
+            { name: 'Sep', exp: 84 }, { name: 'Oct', exp: 87 }, { name: 'Nuo', exp: 90 },
+            // New Units
+            { name: 'Dec', exp: 93 }, { name: 'Und', exp: 96 }, { name: 'Dud', exp: 99 }, 
+            { name: 'Trd', exp: 102 }, { name: 'Qad', exp: 105 }, { name: 'Qid', exp: 108 }, 
+            { name: 'Sxd', exp: 111 }, { name: 'Spd', exp: 114 }, { name: 'Ocd', exp: 117 }, 
+            { name: 'Nod', exp: 120 }, { name: 'Vig', exp: 123 }
         ];
 
         const RANK_COSTS = {};
@@ -1083,7 +920,6 @@
             container.innerHTML = '';
             UPDATE_DATA.forEach((item, index) => {
                 const el = document.createElement('div');
-                // Thêm class card-glow và version-item
                 el.className = `version-item card-glow ${index === 0 ? 'active' : ''}`;
                 el.onclick = () => selectUpdate(index);
                 el.innerHTML = `
@@ -1093,10 +929,7 @@
                 `;
                 container.appendChild(el);
             });
-            // Init mouse tracking for new elements
             initCardGlow();
-            
-            // Show first item content
             if (UPDATE_DATA.length > 0) selectUpdate(0);
         }
 
@@ -1116,6 +949,13 @@
             const activeTab = getActiveTab();
             if (activeTab === 'rank') window.calculateRank();
             else if (activeTab === 'mastery') window.calculateBoss();
+            else if (activeTab === 'gacha') {
+                window.calculateGacha();
+            }
+            else if (activeTab === 'raid') {
+                window.calculateRaid(); // Still calculates but no table displayed
+                window.calculateRaidTarget();
+            }
             saveSettings();
         };
 
@@ -1132,6 +972,8 @@
         function getActiveTab() {
             if (document.getElementById('rankTabBtn').classList.contains('active')) return 'rank';
             if (document.getElementById('masteryTabBtn').classList.contains('active')) return 'mastery';
+            if (document.getElementById('gachaTabBtn').classList.contains('active')) return 'gacha';
+            if (document.getElementById('raidTabBtn').classList.contains('active')) return 'raid';
             return 'updates';
         }
 
@@ -1153,14 +995,20 @@
             document.getElementById('rankTabBtn').classList.remove('active');
             document.getElementById('masteryTabBtn').classList.remove('active');
             document.getElementById('updateTabBtn').classList.remove('active');
+            document.getElementById('gachaTabBtn').classList.remove('active');
+            document.getElementById('raidTabBtn').classList.remove('active');
             
             document.getElementById('rankInputs').classList.add('hidden');
             document.getElementById('masteryInputs').classList.add('hidden');
             document.getElementById('updateInputs').classList.add('hidden');
+            document.getElementById('gachaInputs').classList.add('hidden');
+            document.getElementById('raidInputs').classList.add('hidden');
             
             document.getElementById('rankOutput').classList.add('hidden');
             document.getElementById('masteryOutput').classList.add('hidden');
             document.getElementById('updateOutput').classList.add('hidden');
+            document.getElementById('gachaOutput').classList.add('hidden');
+            document.getElementById('raidOutput').classList.add('hidden');
 
             // Activate specific
             if (sectionId === 'rank') {
@@ -1177,10 +1025,130 @@
                 document.getElementById('updateTabBtn').classList.add('active');
                 document.getElementById('updateInputs').classList.remove('hidden');
                 document.getElementById('updateOutput').classList.remove('hidden');
+            } else if (sectionId === 'gacha') {
+                document.getElementById('gachaTabBtn').classList.add('active');
+                document.getElementById('gachaInputs').classList.remove('hidden');
+                document.getElementById('gachaOutput').classList.remove('hidden');
+                window.calculateGacha();
+            } else if (sectionId === 'raid') {
+                document.getElementById('raidTabBtn').classList.add('active');
+                document.getElementById('raidInputs').classList.remove('hidden');
+                document.getElementById('raidOutput').classList.remove('hidden');
+                window.calculateRaid();
+                window.calculateRaidTarget();
             }
             
             if(shouldSave) saveSettings();
         };
+
+        // --- GACHA LOGIC ---
+        window.setSpinMode = function(mode) {
+            spinMode = mode;
+            document.getElementById('spin1x').classList.toggle('active', mode === 1);
+            document.getElementById('spin2x').classList.toggle('active', mode === 2);
+            // document.getElementById('rollsPerCycleDisplay').innerText = mode; // Removed
+            window.calculateGacha();
+            saveSettings();
+        }
+
+        window.calculateGacha = function() {
+            const shards = getRawVal('gachaShardsVal', 'gachaShardsUnit');
+            const costPerRoll = 10;
+            const baseCycleTime = 1.5; // seconds
+            
+            const totalRolls = Math.floor(shards / costPerRoll);
+            // const cyclesNeeded = Math.ceil(totalRolls / spinMode); // Removed from display
+            const totalSeconds = Math.ceil(totalRolls / spinMode) * baseCycleTime;
+            
+            // Update UI
+            document.getElementById('gachaTimerDisplay').innerHTML = formatBigTime(totalSeconds);
+            document.getElementById('gachaItemsDisplay').innerText = formatNumber(totalRolls);
+            
+            // Removed updates for removed elements (gachaTotalRolls, gachaCycles, rollsPerCycleDisplay)
+        }
+
+        // --- RAID LOGIC ---
+        window.calculateRaid = function() {
+            // Use default values from HTML if not available, defaults updated to 100/4Dc/10.4
+            const refStage = parseInt(document.getElementById('raidRefStage').value) || 100;
+            const refHp = getRawVal('raidRefHpVal', 'raidRefHpUnit');
+            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.4;
+            
+            if(refHp <= 0) return;
+
+            let html = `
+            <tr>
+                <th style="text-align:left;">Stage</th>
+                <th style="text-align:right;">HP Boss</th>
+                <th style="text-align:right;">Click (Fast)</th>
+                <th style="text-align:right;">Click (Nor)</th>
+            </tr>`;
+            
+            // Generate stages 100, 105, 110... (Assuming user wants to start from 100)
+            
+            for(let i = 100; i <= 500; i+=5) {
+                let diff = i - refStage;
+                let steps = diff / 5.0;
+                
+                let estimatedHp = refHp * Math.pow(growthRate, steps);
+                
+                // Calculate required click damage for 60s limit
+                // DPS = HP / 60
+                // ClickFast = DPS / 6.7
+                // ClickNor = DPS / 5.0
+                let dpsReq = estimatedHp / 60.0;
+                let clickFast = dpsReq / 6.7;
+                let clickNor = dpsReq / 5.0;
+
+                let highlightClass = (i === refStage) ? "raid-hl" : "";
+                let rowStyle = (i === refStage) ? "background:rgba(255,235,59,0.15);" : "";
+                
+                html += `<tr style="${rowStyle}">
+                    <td class="${highlightClass}">Raid ${i}</td>
+                    <td>${formatNumber(estimatedHp)}</td>
+                    <td class="val-fast">${formatNumber(clickFast)}</td>
+                    <td class="val-nor">${formatNumber(clickNor)}</td>
+                </tr>`;
+            }
+            document.getElementById('raidTableBody').innerHTML = html;
+            window.calculateRaidTarget(); // Recalc target when base params change
+        }
+
+        // Calculate specific raid stage target
+        window.calculateRaidTarget = function() {
+            const targetStage = parseInt(document.getElementById('raidTargetStageInput').value);
+            if (!targetStage) {
+                document.getElementById('raidTargetStageDisplay').innerText = "---";
+                document.getElementById('raidTargetHpDisplay').innerText = "0";
+                document.getElementById('raidTargetClickDmgDisplay').innerText = "0";
+                // Add clear logic for new fields
+                document.getElementById('raidTargetClickFast').innerText = "0";
+                document.getElementById('raidTargetClickNor').innerText = "0";
+                return;
+            }
+
+            const refStage = parseInt(document.getElementById('raidRefStage').value) || 100;
+            const refHp = getRawVal('raidRefHpVal', 'raidRefHpUnit');
+            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.4;
+
+            // Calculate HP based on ref
+            // Difference in steps of 5
+            let diff = targetStage - refStage;
+            let steps = diff / 5.0;
+            let estimatedHp = refHp * Math.pow(growthRate, steps);
+
+            // Calculate Required Click Dmg (to clear in 60s)
+            // DPS = HP / 60
+            let dpsReq = estimatedHp / 60;
+            let reqClickFast = dpsReq / 6.7;
+            let reqClickNor = dpsReq / 5.0;
+
+            document.getElementById('raidTargetStageDisplay').innerText = targetStage;
+            document.getElementById('raidTargetHpDisplay').innerText = formatNumber(estimatedHp);
+            // Update new fields
+            document.getElementById('raidTargetClickFast').innerText = formatNumber(reqClickFast);
+            document.getElementById('raidTargetClickNor').innerText = formatNumber(reqClickNor);
+        }
 
         // --- CALC 1: RANK ---
         window.calculateRank = function() {
@@ -1222,7 +1190,7 @@
         window.calculateBoss = function() {
             const bossHp = getRawVal('bossHpVal', 'bossHpUnit');
             const damage = getRawVal('damageVal', 'damageUnit'); 
-            const mastery = getRawVal('clickVal', 'clickUnit'); // Using the shared input (or dup)
+            const mastery = getRawVal('clickVal', 'clickUnit'); 
 
             // 1. BOSS TIME
             const dpsDamageAuto = damage * CPS_AUTO;
@@ -1237,7 +1205,8 @@
             
             // Update Damage DPS (Fast & Nor)
             document.getElementById('damageDpsDisplay').innerText = formatNumber(dpsDamageAuto);
-            document.getElementById('damageDpsNorDisplay').innerText = formatNumber(dpsDamageNor);
+            const dmgNorEl = document.getElementById('damageDpsNorDisplay');
+            if(dmgNorEl) dmgNorEl.innerText = formatNumber(dpsDamageNor);
 
             // 2. MASTERY GAINED
             const h = parseFloat(document.getElementById('timeHours').value) || 0;
@@ -1249,15 +1218,16 @@
             const gainedNor = mastery * CPS_NOR * totalSeconds;
             
             document.getElementById('masteryGainedDisplay').innerText = formatNumber(gainedAuto);
-            document.getElementById('masteryGainedNorDisplay').innerText = formatNumber(gainedNor);
+            const mastNorEl = document.getElementById('masteryGainedNorDisplay');
+            if(mastNorEl) mastNorEl.innerText = formatNumber(gainedNor);
         };
 
         // --- INITIALIZATION & FIREBASE ---
         function initUI() {
             buildRankCosts();
-            renderUpdateList(); // New
+            renderUpdateList(); 
 
-            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit', 'clickUnitDup'];
+            const unitSelects = ['clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit', 'clickUnitDup', 'gachaShardsUnit', 'raidRefHpUnit'];
             unitSelects.forEach(id => {
                 const el = document.getElementById(id);
                 if(!el) return;
@@ -1267,6 +1237,8 @@
                     opt.value = index;
                     opt.text = u.name || '';
                     if(u.name === 'K') opt.selected = true;
+                    // Default Dc for Raid Ref (Index 11) since raid 100 is ~4 Dc
+                    if(id === 'raidRefHpUnit' && u.name === 'Dc') opt.selected = true; 
                     el.appendChild(opt);
                 });
             });
@@ -1275,13 +1247,17 @@
             document.getElementById('clickUnitDup').value = document.getElementById('clickUnit').value;
             document.getElementById('clickValDup').value = document.getElementById('clickVal').value;
             
-            initCardGlow(); // Init for existing elements
+            // Set default for raidRefHpUnit to Dc explicitly if loop didn't catch it right
+            const dcIndex = UNITS.findIndex(u => u.name === 'Dc');
+            if(dcIndex > -1 && document.getElementById('raidRefHpUnit')) {
+                 document.getElementById('raidRefHpUnit').value = dcIndex;
+            }
+
+            initCardGlow(); 
         }
 
-        // --- SPOTLIGHT EFFECT JS ---
         function initCardGlow() {
             document.querySelectorAll('.card-glow').forEach(card => {
-                // Remove old listeners to prevent duplicates if recalled
                 card.onmousemove = e => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -1309,6 +1285,14 @@
                 timeHours: document.getElementById('timeHours').value,
                 timeMinutes: document.getElementById('timeMinutes').value,
                 timeSeconds: document.getElementById('timeSeconds').value,
+                gachaShardsVal: document.getElementById('gachaShardsVal').value,
+                gachaShardsUnit: document.getElementById('gachaShardsUnit').value,
+                spinMode: spinMode,
+                raidRefStage: document.getElementById('raidRefStage').value,
+                raidRefHpVal: document.getElementById('raidRefHpVal').value,
+                raidRefHpUnit: document.getElementById('raidRefHpUnit').value,
+                raidGrowth: document.getElementById('raidGrowth').value,
+                raidTargetStageInput: document.getElementById('raidTargetStageInput').value
             };
             try { await setDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName), settings); } 
             catch (e) { console.error(e); }
@@ -1327,7 +1311,6 @@
                     document.getElementById('clickVal').value = s.clickVal || '0';
                     document.getElementById('clickUnit').value = s.clickUnit || '1';
                     
-                    // Sync Dup Inputs
                     document.getElementById('clickValDup').value = s.clickVal || '0';
                     document.getElementById('clickUnitDup').value = s.clickUnit || '1';
 
@@ -1341,6 +1324,17 @@
                     document.getElementById('timeMinutes').value = s.timeMinutes || '0';
                     document.getElementById('timeSeconds').value = s.timeSeconds || '0';
                     
+                    document.getElementById('gachaShardsVal').value = s.gachaShardsVal || '0';
+                    document.getElementById('gachaShardsUnit').value = s.gachaShardsUnit || '1';
+                    if(s.spinMode) window.setSpinMode(s.spinMode);
+
+                    if(s.raidRefStage) document.getElementById('raidRefStage').value = s.raidRefStage;
+                    if(s.raidRefHpVal) document.getElementById('raidRefHpVal').value = s.raidRefHpVal;
+                    if(s.raidRefHpUnit) document.getElementById('raidRefHpUnit').value = s.raidRefHpUnit;
+                    if(s.raidGrowth) document.getElementById('raidGrowth').value = s.raidGrowth;
+                    
+                    if(s.raidTargetStageInput) document.getElementById('raidTargetStageInput').value = s.raidTargetStageInput;
+
                     const tab = s.activeTab || 'rank';
                     setTimeout(() => { window.showSection(tab, false); }, 50);
                 } else { window.handleInput(); }
@@ -1359,12 +1353,15 @@
             onAuthStateChanged(auth, (u) => { if(u) { userId = u.uid; loadSettings(); } });
         }
 
-        // Expose key functions to window for HTML event handlers
         window.handleInput = handleInput;
         window.syncTargetRank = syncTargetRank;
         window.showSection = showSection;
         window.calculateRank = calculateRank;
         window.calculateBoss = calculateBoss;
+        window.calculateGacha = calculateGacha;
+        window.calculateRaid = calculateRaid;
+        window.calculateRaidTarget = calculateRaidTarget;
+        window.setSpinMode = setSpinMode;
         window.selectUpdate = selectUpdate;
         window.syncClickVal = syncClickVal;
         window.syncClickUnit = syncClickUnit;
