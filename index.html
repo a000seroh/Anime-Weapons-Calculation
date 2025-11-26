@@ -245,7 +245,7 @@
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P7</span><input type="number" id="p7DmgVal" placeholder="Nhập DMG P7" oninput="window.calculateBoss()"><select id="p7DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P8</span><input type="number" id="p8DmgVal" placeholder="Nhập DMG P8" oninput="window.calculateBoss()"><select id="p8DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P9</span><input type="number" id="p9DmgVal" placeholder="Nhập DMG P9" oninput="window.calculateBoss()"><select id="p9DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P10</span><input type="number" id="p10DmgVal" placeholder="Nhập DMG P10" oninput="window.calculateBoss()"><select id="p10DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P10</span><input type="number" id="p10DmgVal" placeholder="Nhập DMG P10" oninput="window.calculateBoss()"><select id="p10DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                         </div>
                     </div>
 
@@ -1058,7 +1058,30 @@
             } catch (e) { window.handleInput(); }
         }
         
-        // ... existing firebase setup ...
+        async function setupFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        loadSettings();
+                    } else {
+                        if (initialAuthToken) {
+                            try { await signInWithCustomToken(auth, initialAuthToken); }
+                            catch(e) { console.error("Token Auth Failed", e); await signInAnonymously(auth); }
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (e) {
+                console.log("Firebase not initialized or configured", e);
+                window.handleInput();
+            }
+        }
+
         window.onload = () => { initUI(); setupFirebase(); };
     </script>
     <script>
