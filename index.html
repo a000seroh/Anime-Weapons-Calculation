@@ -30,7 +30,7 @@
             --col-gacha: #d500f9;
             --col-raid: #ffeb3b;
             --col-defense: #00e5ff;
-            --col-update: #00e676; /* Giữ lại biến màu này vì nó được dùng trong các bảng của Boss/Raid/Defense */
+            --col-update: #00e676;
         }
 
         * { box-sizing: border-box; outline: none; }
@@ -65,7 +65,6 @@
 
         /* Nav Bar */
         .nav-tabs-container { background: #0a0a0a; padding: 8px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; z-index: 10; }
-        /* CẬP NHẬT: Đổi grid từ 6 xuống 5 cột */
         .nav-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .nav-btn { background: transparent; border: none; color: #555; padding: 14px 4px; font-family: var(--font-sans); font-weight: 800; font-size: 11px; cursor: pointer; border-radius: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase; white-space: nowrap; letter-spacing: 0.5px; text-align: center; }
         .nav-btn:hover { color: #fff; background-color: rgba(255,255,255,0.03); }
@@ -74,7 +73,6 @@
         #gachaTabBtn.active { background-color: var(--col-gacha); color: #fff; box-shadow: 0 4px 15px rgba(213, 0, 249, 0.3); }
         #raidTabBtn.active { background-color: var(--col-raid); color: #000; box-shadow: 0 4px 15px rgba(255, 235, 59, 0.3); }
         #defenseTabBtn.active { background-color: var(--col-defense); color: #000; box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3); }
-        /* Xóa style active của updateTabBtn */
 
         .content-grid { display: grid; grid-template-columns: 340px 1fr; gap: 24px; width: 100%; }
         .left-panel, .right-panel { display: flex; flex-direction: column; gap: 20px; }
@@ -197,13 +195,15 @@
                 <button class="nav-btn" id="gachaTabBtn" onclick="window.showSection('gacha')">Mastery/Gacha</button>
                 <button class="nav-btn" id="raidTabBtn" onclick="window.showSection('raid')">Raid</button>
                 <button class="nav-btn" id="defenseTabBtn" onclick="window.showSection('defense')">Defense</button>
-                </div>
+            </div>
         </div>
 
         <div class="content-grid">
+            <!-- LEFT PANEL: INPUTS -->
             <div class="left-panel">
                 <div class="control-card card-glow">
                     
+                    <!-- RANK INPUTS -->
                     <div id="rankInputs">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">RANK HIỆN TẠI</span></div>
@@ -221,9 +221,10 @@
                             <div class="section-header"><span class="label-text">MASTERY ĐANG CÓ</span></div>
                             <div class="input-row"><div class="input-wrapper"><input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')"><select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select></div></div>
                         </div>
-                        <div style="font-size:13px; color:#aaa; margin-top:15px; font-style:italic; text-align:center; line-height:1.5; font-weight:600;">*Chỉ là xấp sỉ có thể sai số.<br>Mỗi rank sẽ cách nhau 8.4 lần.</div>
+                        <div style="font-size:13px; color:#aaa; margin-top:15px; font-style:italic; text-align:center; line-height:1.5; font-weight:600;">*Mọi thứ tính toán chỉ là tương đối.<br>Mỗi rank sẽ cách nhau khoảng 8.4 lần.</div>
                     </div>
 
+                    <!-- BOSS INPUTS -->
                     <div id="bossInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">MÁU BOSS (HP)</span></div>
@@ -235,14 +236,20 @@
                         </div>
                         <div class="control-section" style="border-top:1px dashed #333; padding-top:15px; margin-top:15px;">
                              <div class="section-header"><span class="label-text" style="color:var(--col-boss);">NHÓM SĂN BOSS (TÙY CHỌN)</span></div>
+                             <!-- Players 2-10 -->
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P2</span><input type="number" id="p2DmgVal" placeholder="Nhập DMG P2" oninput="window.calculateBoss()"><select id="p2DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P3</span><input type="number" id="p3DmgVal" placeholder="Nhập DMG P3" oninput="window.calculateBoss()"><select id="p3DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P4</span><input type="number" id="p4DmgVal" placeholder="Nhập DMG P4" oninput="window.calculateBoss()"><select id="p4DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P5</span><input type="number" id="p5DmgVal" placeholder="Nhập DMG P5" oninput="window.calculateBoss()"><select id="p5DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P7</span><input type="number" id="p7DmgVal" placeholder="Nhập DMG P7" oninput="window.calculateBoss()"><select id="p7DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P8</span><input type="number" id="p8DmgVal" placeholder="Nhập DMG P8" oninput="window.calculateBoss()"><select id="p8DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P9</span><input type="number" id="p9DmgVal" placeholder="Nhập DMG P9" oninput="window.calculateBoss()"><select id="p9DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P10</span><input type="number" id="p10DmgVal" placeholder="Nhập DMG P10" oninput="window.calculateBoss()"><select id="p10DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                         </div>
                     </div>
 
+                    <!-- GACHA INPUTS -->
                     <div id="gachaInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">TỔNG SHARDS (MẢNH)</span></div>
@@ -258,6 +265,7 @@
                             <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
                             <div class="input-row"><div class="input-wrapper"><input type="number" id="clickValDup" placeholder="0" oninput="window.syncClickVal(this.value)"><select id="clickUnitDup" onchange="window.syncClickUnit(this.value)"></select></div></div>
                             
+                            <!-- TIME INPUT MOVED HERE -->
                             <div class="section-header" style="margin-top:15px;"><span class="label-text">THỜI GIAN CÀY</span></div>
                             <div class="time-input-group">
                                 <div class="input-wrapper"><input type="number" id="timeHours" placeholder="Giờ" oninput="window.calculateMasteryGained()"></div>
@@ -267,40 +275,57 @@
                         </div>
                     </div>
 
+                    <!-- RAID INPUTS -->
                     <div id="raidInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text" style="color:var(--col-raid);">TÍNH TOÁN ẢI CỤ THỂ</span></div>
                             <div class="section-header"><span class="label-text">SỐ ẢI MUỐN CHỌN</span></div>
                             <div class="input-wrapper"><input type="number" id="raidTargetStageInput" placeholder="Nhập số ải (Ví dụ: 180)" oninput="window.calculateRaidTarget()"></div>
-                             <div style="font-size:13px; color:#aaa; margin-top:8px; font-style:italic; font-weight:600; text-align:center;">*HP boss chỉ là xấp sỉ thôi nhé.<br>Mỗi 5 ải máu boss sẽ tăng 10.4 lần đi solo.</div>
+                             <div style="font-size:13px; color:#aaa; margin-top:8px; font-style:italic; font-weight:600; text-align:center;">*Mọi thứ tính toán chỉ là tương đối.<br>HP Boss tăng khoảng 10.5 lần sau mỗi 5 ải (Solo).</div>
+                        </div>
+                        <div class="control-section" style="border-top:1px dashed #333; padding-top:15px; margin-top:15px;">
+                            <div class="section-header"><span class="label-text" style="color:var(--col-raid);">TÍNH PITY SECRET RAID</span></div>
+                            <div class="section-header"><span class="label-text">PITY HIỆN TẠI (MỤC TIÊU 5000)</span></div>
+                            <div class="input-wrapper"><input type="number" id="raidPityCurrent" placeholder="0" oninput="window.calculateRaidPity()"></div>
+                            <div class="section-header" style="margin-top:10px;"><span class="label-text">SỐ WAVE MỖI LẦN ĐI</span></div>
+                            <div class="input-wrapper"><input type="number" id="raidWavePerRun" placeholder="Nhập số wave (Ví dụ: 50)" oninput="window.calculateRaidPity()"></div>
+                            <div style="font-size:11px; color:#666; text-align:center; margin-top:5px;">Giả định: 2 lần / 1 giờ</div>
                         </div>
                         <div class="control-section" style="display:none;"> 
                             <div class="input-wrapper"><input type="number" id="raidRefStage" value="100" oninput="window.calculateRaid()"></div>
                             <div class="input-wrapper"><input type="number" id="raidRefHpVal" value="4" oninput="window.calculateRaid()"><select id="raidRefHpUnit" onchange="window.calculateRaid()"></select></div>
-                            <div class="input-wrapper"><input type="number" id="raidGrowth" value="10.4" oninput="window.calculateRaid()"></div>
+                            <div class="input-wrapper"><input type="number" id="raidGrowth" value="10.5" oninput="window.calculateRaid()"></div>
                         </div>
                     </div>
 
+                    <!-- DEFENSE INPUTS -->
                     <div id="defenseInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text" style="color:var(--col-defense);">TÍNH WAVE CỤ THỂ</span></div>
                             <div class="section-header"><span class="label-text">SỐ WAVE MUỐN CHỌN</span></div>
-                            <div class="input-wrapper"><input type="number" id="defTargetWaveInput" placeholder="Nhập số wave (Ví dụ: 40)" oninput="window.calculateDefenseTarget()"></div>
-                            <div class="section-header" style="margin-top:15px;"><span class="label-text">SỐ LƯỢNG NGƯỜI CHƠI</span></div>
-                            <div class="player-mode-group"><button class="player-btn active" id="def1Player" onclick="window.setDefPlayers(1)">1 Người</button><button class="player-btn" id="def2Player" onclick="window.setDefPlayers(2)">2 Người (+29% HP)</button></div>
-                             <div style="font-size:13px; color:#aaa; margin-top:8px; font-style:italic; font-weight:600; text-align:center;">*HP quái tăng trưởng khoảng 10.6 lần mỗi lần nhảy.<br>*Lưu ý: Chỉ tính máu của quái, chưa bao gồm Boss.</div>
+                            <div class="input-wrapper"><input type="number" id="defTargetWaveInput" placeholder="Nhập số wave (Ví dụ: 70)" oninput="window.calculateDefenseTarget()"></div>
+                             <div style="font-size:13px; color:#aaa; margin-top:8px; font-style:italic; font-weight:600; text-align:center;">*Mọi thứ tính toán chỉ là tương đối.<br>*HP quái tăng trưởng khoảng 10.9 lần mỗi 5 wave.<br>*Lưu ý: Chỉ tính máu Boss (Solo), chưa tính quái con.</div>
+                        </div>
+                        <div class="control-section" style="border-top:1px dashed #333; padding-top:15px; margin-top:15px;">
+                            <div class="section-header"><span class="label-text" style="color:var(--col-defense);">TÍNH PITY SECRET DEFENSE</span></div>
+                            <div class="section-header"><span class="label-text">PITY HIỆN TẠI (MỤC TIÊU 4000)</span></div>
+                            <div class="input-wrapper"><input type="number" id="defPityCurrent" placeholder="0" oninput="window.calculateDefensePity()"></div>
+                            <div class="section-header" style="margin-top:10px;"><span class="label-text">SỐ WAVE MỖI LẦN ĐI</span></div>
+                            <div class="input-wrapper"><input type="number" id="defWavePerRun" placeholder="Nhập số wave (Ví dụ: 50)" oninput="window.calculateDefensePity()"></div>
+                            <div style="font-size:11px; color:#666; text-align:center; margin-top:5px;">Giả định: 2 lần / 1 giờ</div>
                         </div>
                         <div class="control-section" style="display:none;"> 
-                            <div class="input-wrapper"><input type="number" id="defRefWave" value="61" oninput="window.calculateDefense()"></div>
-                            <div class="input-wrapper"><input type="number" id="defRefHpVal" value="457.5" oninput="window.calculateDefense()"><select id="defRefHpUnit" onchange="window.calculateDefense()"></select></div>
-                            <div class="input-wrapper"><input type="number" id="defGrowth" value="10.6" oninput="window.calculateDefense()"></div>
+                            <div class="input-wrapper"><input type="number" id="defRefWave" value="50" oninput="window.calculateDefense()"></div>
+                            <div class="input-wrapper"><input type="number" id="defRefHpVal" value="3" oninput="window.calculateDefense()"><select id="defRefHpUnit" onchange="window.calculateDefense()"></select></div>
+                            <div class="input-wrapper"><input type="number" id="defGrowth" value="10.9" oninput="window.calculateDefense()"></div>
                         </div>
                     </div>
-                    
-                    </div>
+                </div>
             </div>
 
+            <!-- === CỘT PHẢI: KẾT QUẢ === -->
             <div class="right-panel">
+                <!-- RANK -->
                 <div id="rankOutput">
                     <div class="timer-card card-glow">
                         <div class="timer-label">THỜI GIAN CÒN LẠI (FAST 6.7X)</div>
@@ -321,30 +346,40 @@
                     </div>
                 </div>
 
+                <!-- BOSS -->
                 <div id="bossOutput" class="hidden">
                     <div class="timer-card card-glow">
                         <div class="timer-label">THỜI GIAN HẠ BOSS (NHÓM)</div>
                         <div class="big-time" id="bossTimerAuto">0<span class="time-unit">s</span></div>
                         <div class="sub-info">Nor (5x): <span class="highlight" id="bossTimerNor">0s</span></div>
                     </div>
-                    <div class="stats-grid">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
                         <div class="stat-card card-glow compact-card">
-                            <div class="stat-header"><div class="stat-title">THÔNG TIN BOSS</div><div class="stat-icon">🩸</div></div>
-                            <div class="stat-row"><div class="stat-col-val"><div class="stat-value-sm" id="bossHpDisplay">0</div><div class="stat-label-sm">Máu Boss</div></div></div>
-                            <div class="stat-row" style="border-top:1px dashed #333; padding-top:10px; margin-top:10px;"><div class="stat-col-val"><div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div><div class="stat-label-sm">Tổng DPS Team (Fast)</div></div></div>
+                            <div class="stat-header" style="margin-bottom:12px;"><div class="stat-title">THÔNG TIN BOSS</div><div class="stat-icon">🩸</div></div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+                                <div>
+                                    <div class="stat-value-sm" id="bossHpDisplay">0</div>
+                                    <div class="stat-label-sm">Máu Boss</div>
+                                </div>
+                                <div style="border-left: 1px solid #333; padding-left: 20px;">
+                                    <div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div>
+                                    <div class="stat-label-sm">Tổng DPS Team (Fast)</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="update-card card-glow">
                             <div class="update-header-box">
-                                <div class="up-title" style="color:var(--col-boss);">Điều kiện nhận đồ (20%)</div>
+                                <div class="up-title" style="color:var(--col-boss);">Điều kiện nhận đồ (15%)</div>
                                 <div class="up-date" style="background:rgba(255,87,34,0.1); color:var(--col-boss);" id="dmgRequiredDisplay">Cần: 0</div>
                             </div>
-                            <div class="raid-table-container" style="height:auto; max-height:300px;">
+                            <div class="raid-table-container" style="height:auto; max-height:none; overflow:visible;">
                                 <table class="raid-table boss-table" id="bossTeamTable"></table>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- GACHA -->
                 <div id="gachaOutput" class="hidden">
                     <div class="timer-card card-glow" style="--accent-glow: rgba(213, 0, 249, 0.6); margin-bottom: 20px;">
                         <div class="timer-label">THỜI GIAN GACHA DỰ KIẾN</div>
@@ -358,7 +393,15 @@
                     </div>
                 </div>
 
+                <!-- RAID -->
                 <div id="raidOutput" class="hidden">
+                    <div class="stat-card card-glow" style="margin-bottom: 20px; border-color: var(--col-raid);">
+                        <div class="stat-header"><div class="stat-title">SECRET RAID PITY (5000)</div><div class="stat-icon">💎</div></div>
+                        <div class="stat-row"><div class="stat-col-val"><div class="stat-value" id="raidPityRunsDisplay">0</div><div class="stat-label-sm">Số lần cần đi</div></div></div>
+                        <div class="stat-row" style="border-top:1px dashed #444; padding-top:12px; margin-top:12px;">
+                            <div class="stat-col-val"><div class="stat-value-sm accent-fast" id="raidPityTimeDisplay">0h</div><div class="stat-label-sm">Thời gian dự kiến</div></div>
+                        </div>
+                    </div>
                     <div class="stat-card card-glow" style="margin-bottom: 20px; border-color: var(--col-raid);">
                         <div class="stat-header"><div class="stat-title">KẾT QUẢ TÍNH TOÁN ẢI <span id="raidTargetStageDisplay" style="color:#fff;">---</span></div><div class="stat-icon">🎯</div></div>
                         <div class="stat-row"><div class="stat-col-val"><div class="stat-value" id="raidTargetHpDisplay">0</div><div class="stat-label-sm">Máu Boss Dự Kiến</div></div></div>
@@ -368,27 +411,34 @@
                         </div>
                     </div>
                     <div class="update-card card-glow">
-                        <div class="update-header-box"><div class="up-title" style="color:var(--col-raid);">Bảng tra cứu Raid Boss</div><div class="up-date" style="background:rgba(255,235,59,0.1); color:var(--col-raid);">100+</div></div>
+                        <div class="update-header-box"><div class="up-title" style="color:var(--col-raid);">Bảng tra cứu Raid Boss</div><div class="up-date" style="background:rgba(255,235,59,0.1); color:var(--col-raid);">100-500</div></div>
                         <div class="raid-table-container"><table class="raid-table" id="raidTableBody"></table></div>
                     </div>
                 </div>
 
+                <!-- DEFENSE -->
                 <div id="defenseOutput" class="hidden">
                     <div class="stat-card card-glow" style="margin-bottom: 20px; border-color: var(--col-defense);">
+                        <div class="stat-header"><div class="stat-title">SECRET DEFENSE PITY (4000)</div><div class="stat-icon">🛡️</div></div>
+                        <div class="stat-row"><div class="stat-col-val"><div class="stat-value" id="defPityRunsDisplay">0</div><div class="stat-label-sm">Số lần cần đi</div></div></div>
+                        <div class="stat-row" style="border-top:1px dashed #444; padding-top:12px; margin-top:12px;">
+                            <div class="stat-col-val"><div class="stat-value-sm accent-fast" id="defPityTimeDisplay">0h</div><div class="stat-label-sm">Thời gian dự kiến</div></div>
+                        </div>
+                    </div>
+                    <div class="stat-card card-glow" style="margin-bottom: 20px; border-color: var(--col-defense);">
                         <div class="stat-header"><div class="stat-title">KẾT QUẢ TÍNH TOÁN WAVE <span id="defTargetWaveDisplay" style="color:#fff;">---</span></div><div class="stat-icon">🛡️</div></div>
-                        <div class="stat-row"><div class="stat-col-val"><div class="stat-value" id="defTargetHpDisplay">0</div><div class="stat-label-sm">HP Quái Dự Kiến <span id="defModeLabel">(1 Player)</span></div></div></div>
+                        <div class="stat-row"><div class="stat-col-val"><div class="stat-value" id="defTargetHpDisplay">0</div><div class="stat-label-sm">HP Quái Dự Kiến <span id="defModeLabel">(Solo)</span></div></div></div>
                         <div class="stat-row" style="border-top:1px dashed #444; padding-top:12px; margin-top:12px;">
                             <div class="stat-col-val"><div class="stat-value-sm accent-fast" id="defTargetClickFast">0</div><div class="stat-label-sm">1 Click (Fast 6.7x)</div></div>
                             <div class="stat-col-val" style="text-align:right;"><div class="stat-value-sm accent-nor" id="defTargetClickNor">0</div><div class="stat-label-sm">1 Click (Nor 5.0x)</div></div>
                         </div>
                     </div>
                     <div class="update-card card-glow">
-                        <div class="update-header-box"><div class="up-title" style="color:var(--col-defense);">Bảng tra cứu Defense Wave</div><div class="up-date" style="background:rgba(0,229,255,0.1); color:var(--col-defense);">11-201</div></div>
+                        <div class="update-header-box"><div class="up-title" style="color:var(--col-defense);">Bảng tra cứu Defense Wave</div><div class="up-date" style="background:rgba(0,229,255,0.1); color:var(--col-defense);">50-200</div></div>
                         <div class="raid-table-container"><table class="raid-table def-table" id="defTableBody"></table></div>
                     </div>
                 </div>
-
-                </div>
+            </div>
         </div>
     </div>
 
@@ -408,8 +458,6 @@
         const settingsDocName = 'calculator_settings';
         let spinMode = 1; 
         let defPlayers = 1; 
-        
-        // Đã xóa UPDATE_DATA
 
         const SCALING_FACTOR = 8.400;
         const BASE_COST_MAGNITUDE = 30; 
@@ -482,15 +530,13 @@
             }
         }
 
-        // Đã xóa renderUpdateList và selectUpdate
-
         window.handleInput = function(source) {
             const activeTab = getActiveTab();
             if (activeTab === 'rank') window.calculateRank();
             else if (activeTab === 'boss') window.calculateBoss();
             else if (activeTab === 'gacha') { window.calculateGacha(); window.calculateMasteryGained(); }
-            else if (activeTab === 'raid') { window.calculateRaid(); window.calculateRaidTarget(); }
-            else if (activeTab === 'defense') { window.calculateDefense(); window.calculateDefenseTarget(); }
+            else if (activeTab === 'raid') { window.calculateRaid(); window.calculateRaidTarget(); window.calculateRaidPity(); }
+            else if (activeTab === 'defense') { window.calculateDefense(); window.calculateDefenseTarget(); window.calculateDefensePity(); }
             saveSettings();
         };
 
@@ -531,7 +577,7 @@
             if (document.getElementById('gachaTabBtn').classList.contains('active')) return 'gacha';
             if (document.getElementById('raidTabBtn').classList.contains('active')) return 'raid';
             if (document.getElementById('defenseTabBtn').classList.contains('active')) return 'defense';
-            return 'rank'; // Mặc định trả về rank nếu không tìm thấy
+            return 'rank';
         }
 
         window.syncTargetRank = function() {
@@ -547,7 +593,6 @@
 
         window.showSection = function(sectionId, shouldSave = true) {
             // Reset
-            // Xóa 'updates' khỏi mảng tabs
             const tabs = ['rank', 'boss', 'gacha', 'raid', 'defense'];
             tabs.forEach(t => {
                 const btn = document.getElementById(t + 'TabBtn');
@@ -569,8 +614,8 @@
             if (sectionId === 'rank') window.calculateRank();
             else if (sectionId === 'boss') window.calculateBoss();
             else if (sectionId === 'gacha') { window.calculateGacha(); window.calculateMasteryGained(); }
-            else if (sectionId === 'raid') { window.calculateRaid(); window.calculateRaidTarget(); }
-            else if (sectionId === 'defense') { window.calculateDefense(); window.calculateDefenseTarget(); }
+            else if (sectionId === 'raid') { window.calculateRaid(); window.calculateRaidTarget(); window.calculateRaidPity(); }
+            else if (sectionId === 'defense') { window.calculateDefense(); window.calculateDefenseTarget(); window.calculateDefensePity(); }
             
             if(shouldSave) saveSettings();
         };
@@ -596,10 +641,10 @@
         window.calculateRaid = function() {
             const refStage = parseInt(document.getElementById('raidRefStage').value) || 100;
             const refHp = getRawVal('raidRefHpVal', 'raidRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.4;
+            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.5;
             if(refHp <= 0) return;
             let html = `<tr><th style="text-align:left;">Stage</th><th style="text-align:right;">HP Boss</th><th style="text-align:right;">Click (Fast)</th><th style="text-align:right;">Click (Nor)</th></tr>`;
-            for(let i = 100; i <= 500; i+=5) {
+            for(let i = 100; i <= 500; i++) {
                 let diff = i - refStage;
                 let steps = diff / 5.0;
                 let estimatedHp = refHp * Math.pow(growthRate, steps);
@@ -613,6 +658,41 @@
             document.getElementById('raidTableBody').innerHTML = html;
             window.calculateRaidTarget();
         }
+        
+        window.calculateRaidPity = function() {
+            const currentPity = parseInt(document.getElementById('raidPityCurrent').value) || 0;
+            const wavesPerRun = parseInt(document.getElementById('raidWavePerRun').value) || 0;
+            const target = 5000;
+            
+            if (wavesPerRun <= 0) {
+                 document.getElementById('raidPityRunsDisplay').innerText = "0";
+                 document.getElementById('raidPityTimeDisplay').innerText = "0h";
+                 return;
+            }
+            
+            const remaining = Math.max(0, target - currentPity);
+            if (remaining === 0) {
+                 document.getElementById('raidPityRunsDisplay').innerText = "Xong";
+                 document.getElementById('raidPityTimeDisplay').innerText = "Xong";
+                 return;
+            }
+            
+            const runsNeeded = Math.ceil(remaining / wavesPerRun);
+            // 2 runs per hour = 0.5 hours per run
+            const totalHours = runsNeeded / 2.0; 
+            
+            document.getElementById('raidPityRunsDisplay').innerText = formatNumber(runsNeeded);
+            
+            // Format time nicely
+            if(totalHours < 1) {
+                const mins = Math.ceil(totalHours * 60);
+                document.getElementById('raidPityTimeDisplay').innerText = `${mins}m`;
+            } else {
+                const h = Math.floor(totalHours);
+                const m = Math.ceil((totalHours - h) * 60);
+                document.getElementById('raidPityTimeDisplay').innerText = (m > 0) ? `${h}h ${m}m` : `${h}h`;
+            }
+        }
 
         window.calculateRaidTarget = function() {
             const targetStage = parseInt(document.getElementById('raidTargetStageInput').value);
@@ -625,7 +705,7 @@
             }
             const refStage = parseInt(document.getElementById('raidRefStage').value) || 100;
             const refHp = getRawVal('raidRefHpVal', 'raidRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.4;
+            const growthRate = parseFloat(document.getElementById('raidGrowth').value) || 10.5;
             let diff = targetStage - refStage;
             let steps = diff / 5.0;
             let estimatedHp = refHp * Math.pow(growthRate, steps);
@@ -640,49 +720,38 @@
 
         window.setDefPlayers = function(p) {
             defPlayers = p;
-            document.getElementById('def1Player').classList.toggle('active', p === 1);
-            document.getElementById('def2Player').classList.toggle('active', p === 2);
-            document.getElementById('defModeLabel').innerText = p === 2 ? '(2 Players +29%)' : '(1 Player)';
+            // Removed UI update for buttons since they are gone
+            // document.getElementById('def1Player').classList.toggle('active', p === 1);
+            // document.getElementById('def2Player').classList.toggle('active', p === 2);
+            document.getElementById('defModeLabel').innerText = '(Solo)';
             window.calculateDefense();
             saveSettings();
         }
         
         function getDefSteps(fromWave, toWave) {
-            let simWave = 11;
-            let simJump = 4;
-            let fromIndex = -1;
-            let toIndex = -1;
-            for(let i=0; i<100; i++) { 
-                if (simWave === fromWave) fromIndex = i;
-                if (simWave === toWave) toIndex = i;
-                if (fromIndex !== -1 && toIndex !== -1) break;
-                simWave += simJump;
-                simJump = (simJump === 4) ? 6 : 4;
-            }
-            if (fromIndex !== -1 && toIndex !== -1) return toIndex - fromIndex;
-            return (toWave - fromWave) / 5.0; 
+             // Simplified to pure multiplier steps for calculator accuracy on high waves
+             return (toWave - fromWave) / 5.0;
         }
 
         window.calculateDefense = function() {
-            const refWave = parseInt(document.getElementById('defRefWave').value) || 61;
+            const refWave = parseInt(document.getElementById('defRefWave').value) || 50;
             const refHp = getRawVal('defRefHpVal', 'defRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.6;
+            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.9;
             if(refHp <= 0) return;
             let html = `<tr><th style="text-align:left;">Wave</th><th style="text-align:right;">HP Quái</th><th style="text-align:right;">Click (Fast)</th><th style="text-align:right;">Click (Nor)</th></tr>`;
-            let currentWave = 11;
-            let jump = 4; 
-            while(currentWave <= 201) {
-                let steps = getDefSteps(refWave, currentWave);
+            
+            // Loop from 50 to 200, step 1
+            for(let i = 50; i <= 200; i++) {
+                let steps = (i - refWave) / 5.0;
                 let estimatedHp = refHp * Math.pow(growthRate, steps);
-                if(defPlayers === 2) estimatedHp = estimatedHp * 1.29; 
+                // Removed 2 player scaling
+                // if(defPlayers === 2) estimatedHp = estimatedHp * 1.29; 
                 let dpsReq = estimatedHp / 60.0; 
                 let clickFast = dpsReq / 6.7;
                 let clickNor = dpsReq / 5.0;
-                let highlightClass = (currentWave === refWave) ? "def-hl" : "";
-                let rowStyle = (currentWave === refWave) ? "background:rgba(0, 229, 255, 0.15);" : "";
-                html += `<tr style="${rowStyle}"><td class="${highlightClass}">Wave ${currentWave}</td><td>${formatNumber(estimatedHp)}</td><td class="val-fast">${formatNumber(clickFast)}</td><td class="val-nor">${formatNumber(clickNor)}</td></tr>`;
-                currentWave += jump;
-                jump = (jump === 4) ? 6 : 4; 
+                let highlightClass = (i === refWave) ? "def-hl" : "";
+                let rowStyle = (i === refWave) ? "background:rgba(0, 229, 255, 0.15);" : "";
+                html += `<tr style="${rowStyle}"><td class="${highlightClass}">Wave ${i}</td><td>${formatNumber(estimatedHp)}</td><td class="val-fast">${formatNumber(clickFast)}</td><td class="val-nor">${formatNumber(clickNor)}</td></tr>`;
             }
             document.getElementById('defTableBody').innerHTML = html;
             window.calculateDefenseTarget();
@@ -697,12 +766,13 @@
                 document.getElementById('defTargetClickNor').innerText = "0";
                 return;
             }
-            const refWave = parseInt(document.getElementById('defRefWave').value) || 61;
+            const refWave = parseInt(document.getElementById('defRefWave').value) || 50;
             const refHp = getRawVal('defRefHpVal', 'defRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.6;
-            let steps = getDefSteps(refWave, targetWave);
+            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.9;
+            let steps = (targetWave - refWave) / 5.0;
             let estimatedHp = refHp * Math.pow(growthRate, steps);
-            if(defPlayers === 2) estimatedHp = estimatedHp * 1.29;
+            // Removed 2 player scaling
+            // if(defPlayers === 2) estimatedHp = estimatedHp * 1.29;
             let dpsReq = estimatedHp / 60; 
             let reqClickFast = dpsReq / 6.7;
             let reqClickNor = dpsReq / 5.0;
@@ -710,6 +780,39 @@
             document.getElementById('defTargetHpDisplay').innerText = formatNumber(estimatedHp);
             document.getElementById('defTargetClickFast').innerText = formatNumber(reqClickFast);
             document.getElementById('defTargetClickNor').innerText = formatNumber(reqClickNor);
+        }
+        
+        window.calculateDefensePity = function() {
+            const currentPity = parseInt(document.getElementById('defPityCurrent').value) || 0;
+            const wavesPerRun = parseInt(document.getElementById('defWavePerRun').value) || 0;
+            const target = 4000;
+            
+            if (wavesPerRun <= 0) {
+                 document.getElementById('defPityRunsDisplay').innerText = "0";
+                 document.getElementById('defPityTimeDisplay').innerText = "0h";
+                 return;
+            }
+            
+            const remaining = Math.max(0, target - currentPity);
+            if (remaining === 0) {
+                 document.getElementById('defPityRunsDisplay').innerText = "Xong";
+                 document.getElementById('defPityTimeDisplay').innerText = "Xong";
+                 return;
+            }
+            
+            const runsNeeded = Math.ceil(remaining / wavesPerRun);
+            const totalHours = runsNeeded / 2.0; 
+            
+            document.getElementById('defPityRunsDisplay').innerText = formatNumber(runsNeeded);
+            
+            if(totalHours < 1) {
+                const mins = Math.ceil(totalHours * 60);
+                document.getElementById('defPityTimeDisplay').innerText = `${mins}m`;
+            } else {
+                const h = Math.floor(totalHours);
+                const m = Math.ceil((totalHours - h) * 60);
+                document.getElementById('defPityTimeDisplay').innerText = (m > 0) ? `${h}h ${m}m` : `${h}h`;
+            }
         }
 
         window.calculateRank = function() {
@@ -742,7 +845,11 @@
             const p4Dmg = getRawVal('p4DmgVal', 'p4DmgUnit');
             const p5Dmg = getRawVal('p5DmgVal', 'p5DmgUnit');
             const p6Dmg = getRawVal('p6DmgVal', 'p6DmgUnit');
-            const totalClickDmg = p1Dmg + p2Dmg + p3Dmg + p4Dmg + p5Dmg + p6Dmg;
+            const p7Dmg = getRawVal('p7DmgVal', 'p7DmgUnit');
+            const p8Dmg = getRawVal('p8DmgVal', 'p8DmgUnit');
+            const p9Dmg = getRawVal('p9DmgVal', 'p9DmgUnit');
+            const p10Dmg = getRawVal('p10DmgVal', 'p10DmgUnit');
+            const totalClickDmg = p1Dmg + p2Dmg + p3Dmg + p4Dmg + p5Dmg + p6Dmg + p7Dmg + p8Dmg + p9Dmg + p10Dmg;
             const dpsDamageAuto = totalClickDmg * CPS_AUTO;
             const timeBossAuto = dpsDamageAuto > 0 ? bossHp / dpsDamageAuto : 0;
             const timeBossNor = (totalClickDmg * CPS_NOR) > 0 ? bossHp / (totalClickDmg * CPS_NOR) : 0;
@@ -752,12 +859,15 @@
             document.getElementById('bossHpDisplay').innerText = formatNumber(bossHp);
             document.getElementById('damageDpsDisplay').innerText = formatNumber(dpsDamageAuto);
 
-            const reqDmg = bossHp * 0.2;
-            document.getElementById('dmgRequiredDisplay').innerText = `Cần: ${formatNumber(reqDmg)} (20%)`;
+            const reqDmg = bossHp * 0.15;
+            document.getElementById('dmgRequiredDisplay').innerText = `Cần: ${formatNumber(reqDmg)} (15%)`;
             
-            let players = [ { name: 'P1 (Bạn)', dmg: p1Dmg }, { name: 'P2', dmg: p2Dmg }, { name: 'P3', dmg: p3Dmg }, { name: 'P4', dmg: p4Dmg }, { name: 'P5', dmg: p5Dmg }, { name: 'P6', dmg: p6Dmg } ];
-            let tableHtml = `<tr><th style="text-align:left;">Người chơi</th><th style="text-align:right;">Tổng Dmg (1 Click)</th><th style="text-align:right;">Trạng thái</th></tr>`;
-            const threshold = totalClickDmg * 0.2;
+            let players = [ 
+                { name: 'P1 (Bạn)', dmg: p1Dmg }, { name: 'P2', dmg: p2Dmg }, { name: 'P3', dmg: p3Dmg }, { name: 'P4', dmg: p4Dmg }, { name: 'P5', dmg: p5Dmg }, { name: 'P6', dmg: p6Dmg },
+                { name: 'P7', dmg: p7Dmg }, { name: 'P8', dmg: p8Dmg }, { name: 'P9', dmg: p9Dmg }, { name: 'P10', dmg: p10Dmg }
+            ];
+            let tableHtml = `<tr><th style="text-align:left;">Người chơi</th><th style="text-align:right;">Sát thương Gây ra</th><th style="text-align:right;">Trạng thái</th></tr>`;
+            const threshold = totalClickDmg * 0.15;
             players.forEach(p => {
                 if(p.dmg > 0) { 
                     let isOk = p.dmg >= threshold;
@@ -773,11 +883,11 @@
 
         function initUI() {
             buildRankCosts();
-            // Đã xóa renderUpdateList();
             const unitSelects = [
                 'clickUnit', 'bossHpUnit', 'damageUnit', 'currentMasteryUnit', 'clickUnitDup', 
                 'gachaShardsUnit', 'raidRefHpUnit', 'defRefHpUnit',
-                'p2DmgUnit', 'p3DmgUnit', 'p4DmgUnit', 'p5DmgUnit', 'p6DmgUnit'
+                'p2DmgUnit', 'p3DmgUnit', 'p4DmgUnit', 'p5DmgUnit', 'p6DmgUnit',
+                'p7DmgUnit', 'p8DmgUnit', 'p9DmgUnit', 'p10DmgUnit'
             ];
             unitSelects.forEach(id => {
                 const el = document.getElementById(id);
@@ -833,6 +943,14 @@
                 p5DmgUnit: document.getElementById('p5DmgUnit').value,
                 p6DmgVal: document.getElementById('p6DmgVal').value,
                 p6DmgUnit: document.getElementById('p6DmgUnit').value,
+                p7DmgVal: document.getElementById('p7DmgVal').value,
+                p7DmgUnit: document.getElementById('p7DmgUnit').value,
+                p8DmgVal: document.getElementById('p8DmgVal').value,
+                p8DmgUnit: document.getElementById('p8DmgUnit').value,
+                p9DmgVal: document.getElementById('p9DmgVal').value,
+                p9DmgUnit: document.getElementById('p9DmgUnit').value,
+                p10DmgVal: document.getElementById('p10DmgVal').value,
+                p10DmgUnit: document.getElementById('p10DmgUnit').value,
                 
                 clickVal: document.getElementById('clickVal').value,
                 clickUnit: document.getElementById('clickUnit').value,
@@ -854,11 +972,16 @@
                 raidRefHpUnit: document.getElementById('raidRefHpUnit').value,
                 raidGrowth: document.getElementById('raidGrowth').value,
                 raidTargetStageInput: document.getElementById('raidTargetStageInput').value,
+                raidPityCurrent: document.getElementById('raidPityCurrent').value,
+                raidWavePerRun: document.getElementById('raidWavePerRun').value,
+
                 defRefWave: document.getElementById('defRefWave').value,
                 defRefHpVal: document.getElementById('defRefHpVal').value,
                 defRefHpUnit: document.getElementById('defRefHpUnit').value,
                 defGrowth: document.getElementById('defGrowth').value,
                 defTargetWaveInput: document.getElementById('defTargetWaveInput').value,
+                defPityCurrent: document.getElementById('defPityCurrent').value,
+                defWavePerRun: document.getElementById('defWavePerRun').value,
                 defPlayers: defPlayers
             };
             try { await setDoc(doc(db, userSettingsPath, userId, 'app_data', settingsDocName), settings); } 
@@ -891,6 +1014,14 @@
                     if(s.p5DmgUnit) document.getElementById('p5DmgUnit').value = s.p5DmgUnit;
                     if(s.p6DmgVal) document.getElementById('p6DmgVal').value = s.p6DmgVal;
                     if(s.p6DmgUnit) document.getElementById('p6DmgUnit').value = s.p6DmgUnit;
+                    if(s.p7DmgVal) document.getElementById('p7DmgVal').value = s.p7DmgVal;
+                    if(s.p7DmgUnit) document.getElementById('p7DmgUnit').value = s.p7DmgUnit;
+                    if(s.p8DmgVal) document.getElementById('p8DmgVal').value = s.p8DmgVal;
+                    if(s.p8DmgUnit) document.getElementById('p8DmgUnit').value = s.p8DmgUnit;
+                    if(s.p9DmgVal) document.getElementById('p9DmgVal').value = s.p9DmgVal;
+                    if(s.p9DmgUnit) document.getElementById('p9DmgUnit').value = s.p9DmgUnit;
+                    if(s.p10DmgVal) document.getElementById('p10DmgVal').value = s.p10DmgVal;
+                    if(s.p10DmgUnit) document.getElementById('p10DmgUnit').value = s.p10DmgUnit;
 
                     document.getElementById('currentRank').value = s.currentRank || '0';
                     document.getElementById('targetRank').value = s.targetRank || '1';
@@ -909,12 +1040,16 @@
                     if(s.raidRefHpUnit) document.getElementById('raidRefHpUnit').value = s.raidRefHpUnit;
                     if(s.raidGrowth) document.getElementById('raidGrowth').value = s.raidGrowth;
                     if(s.raidTargetStageInput) document.getElementById('raidTargetStageInput').value = s.raidTargetStageInput;
+                    if(s.raidPityCurrent) document.getElementById('raidPityCurrent').value = s.raidPityCurrent;
+                    if(s.raidWavePerRun) document.getElementById('raidWavePerRun').value = s.raidWavePerRun;
 
                     if(s.defRefWave) document.getElementById('defRefWave').value = s.defRefWave;
                     if(s.defRefHpVal) document.getElementById('defRefHpVal').value = s.defRefHpVal;
                     if(s.defRefHpUnit) document.getElementById('defRefHpUnit').value = s.defRefHpUnit;
                     if(s.defGrowth) document.getElementById('defGrowth').value = s.defGrowth;
                     if(s.defTargetWaveInput) document.getElementById('defTargetWaveInput').value = s.defTargetWaveInput;
+                    if(s.defPityCurrent) document.getElementById('defPityCurrent').value = s.defPityCurrent;
+                    if(s.defWavePerRun) document.getElementById('defWavePerRun').value = s.defWavePerRun;
                     if(s.defPlayers) window.setDefPlayers(s.defPlayers);
 
                     const tab = (s.activeTab === 'updates') ? 'rank' : (s.activeTab || 'rank');
@@ -923,30 +1058,7 @@
             } catch (e) { window.handleInput(); }
         }
         
-        async function setupFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        loadSettings();
-                    } else {
-                        if (initialAuthToken) {
-                            try { await signInWithCustomToken(auth, initialAuthToken); }
-                            catch(e) { console.error("Token Auth Failed", e); await signInAnonymously(auth); }
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log("Firebase not initialized or configured", e);
-                window.handleInput();
-            }
-        }
-
+        // ... existing firebase setup ...
         window.onload = () => { initUI(); setupFirebase(); };
     </script>
     <script>
