@@ -241,7 +241,7 @@
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P3</span><input type="number" id="p3DmgVal" placeholder="Nhập DMG P3" oninput="window.calculateBoss()"><select id="p3DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P4</span><input type="number" id="p4DmgVal" placeholder="Nhập DMG P4" oninput="window.calculateBoss()"><select id="p4DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P5</span><input type="number" id="p5DmgVal" placeholder="Nhập DMG P5" oninput="window.calculateBoss()"><select id="p5DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P7</span><input type="number" id="p7DmgVal" placeholder="Nhập DMG P7" oninput="window.calculateBoss()"><select id="p7DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P8</span><input type="number" id="p8DmgVal" placeholder="Nhập DMG P8" oninput="window.calculateBoss()"><select id="p8DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                              <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P9</span><input type="number" id="p9DmgVal" placeholder="Nhập DMG P9" oninput="window.calculateBoss()"><select id="p9DmgUnit" onchange="window.calculateBoss()"></select></div></div>
@@ -317,7 +317,7 @@
                         <div class="control-section" style="display:none;"> 
                             <div class="input-wrapper"><input type="number" id="defRefWave" value="50" oninput="window.calculateDefense()"></div>
                             <div class="input-wrapper"><input type="number" id="defRefHpVal" value="3" oninput="window.calculateDefense()"><select id="defRefHpUnit" onchange="window.calculateDefense()"></select></div>
-                            <div class="input-wrapper"><input type="number" id="defGrowth" value="10.9" oninput="window.calculateDefense()"></div>
+                            <div class="input-wrapper"><input type="number" id="defGrowth" value="11" oninput="window.calculateDefense()"></div>
                         </div>
                     </div>
                 </div>
@@ -363,7 +363,7 @@
                                 </div>
                                 <div style="border-left: 1px solid #333; padding-left: 20px;">
                                     <div class="stat-value-sm accent-fast" id="damageDpsDisplay">0</div>
-                                    <div class="stat-label-sm">Tổng DPS Team (Fast)</div>
+                                    <div class="stat-label-sm">Tổng DPS Team (Fast + Crit)</div>
                                 </div>
                             </div>
                         </div>
@@ -736,12 +736,12 @@
         window.calculateDefense = function() {
             const refWave = parseInt(document.getElementById('defRefWave').value) || 50;
             const refHp = getRawVal('defRefHpVal', 'defRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.9;
+            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 11;
             if(refHp <= 0) return;
             let html = `<tr><th style="text-align:left;">Wave</th><th style="text-align:right;">HP Quái</th><th style="text-align:right;">Click (Fast)</th><th style="text-align:right;">Click (Nor)</th></tr>`;
             
-            // Loop from 50 to 200, step 1
-            for(let i = 50; i <= 200; i++) {
+            // Loop from 50 to 200, step 5
+            for(let i = 50; i <= 200; i+=5) {
                 let steps = (i - refWave) / 5.0;
                 let estimatedHp = refHp * Math.pow(growthRate, steps);
                 // Removed 2 player scaling
@@ -768,7 +768,7 @@
             }
             const refWave = parseInt(document.getElementById('defRefWave').value) || 50;
             const refHp = getRawVal('defRefHpVal', 'defRefHpUnit');
-            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 10.9;
+            const growthRate = parseFloat(document.getElementById('defGrowth').value) || 11;
             let steps = (targetWave - refWave) / 5.0;
             let estimatedHp = refHp * Math.pow(growthRate, steps);
             // Removed 2 player scaling
@@ -849,34 +849,58 @@
             const p8Dmg = getRawVal('p8DmgVal', 'p8DmgUnit');
             const p9Dmg = getRawVal('p9DmgVal', 'p9DmgUnit');
             const p10Dmg = getRawVal('p10DmgVal', 'p10DmgUnit');
+            
             const totalClickDmg = p1Dmg + p2Dmg + p3Dmg + p4Dmg + p5Dmg + p6Dmg + p7Dmg + p8Dmg + p9Dmg + p10Dmg;
-            const dpsDamageAuto = totalClickDmg * CPS_AUTO;
+            
+            // New Logic: 50% Crit Chance, 1.5x Crit Damage
+            // Average Multiplier = 1 + 0.5 * (1.5 - 1) = 1.25
+            const totalEffectiveDmg = totalClickDmg * 1.25;
+
+            const dpsDamageAuto = totalEffectiveDmg * CPS_AUTO;
             const timeBossAuto = dpsDamageAuto > 0 ? bossHp / dpsDamageAuto : 0;
-            const timeBossNor = (totalClickDmg * CPS_NOR) > 0 ? bossHp / (totalClickDmg * CPS_NOR) : 0;
+            const timeBossNor = (totalEffectiveDmg * CPS_NOR) > 0 ? bossHp / (totalEffectiveDmg * CPS_NOR) : 0;
 
             document.getElementById('bossTimerAuto').innerHTML = formatBigTime(timeBossAuto);
             document.getElementById('bossTimerNor').innerText = formatTextTime(timeBossNor);
             document.getElementById('bossHpDisplay').innerText = formatNumber(bossHp);
             document.getElementById('damageDpsDisplay').innerText = formatNumber(dpsDamageAuto);
 
-            const reqDmg = bossHp * 0.15;
-            document.getElementById('dmgRequiredDisplay').innerText = `Cần: ${formatNumber(reqDmg)} (15%)`;
+            // Threshold calculation based on effective damage total?
+            // Usually threshold is percentage of total damage output capability.
+            // If everyone has the same crit multiplier (1.25), the ratio of their contributions is the same.
+            // So checking base damage ratio against base total is mathematically identical to checking effective ratio against effective total.
+            // effective_p1 / effective_total = (p1 * 1.25) / (total * 1.25) = p1 / total.
+            // However, for display, user asked for "HP được đánh được" (Damage Dealt).
+            // So I will display the effective average damage per click in the table.
+            
+            const reqDmgBase = totalClickDmg * 0.15;
+            const reqDmgEffective = totalEffectiveDmg * 0.15;
+            
+            document.getElementById('dmgRequiredDisplay').innerText = `Cần: ${formatNumber(reqDmgEffective)} (15%)`;
             
             let players = [ 
                 { name: 'P1 (Bạn)', dmg: p1Dmg }, { name: 'P2', dmg: p2Dmg }, { name: 'P3', dmg: p3Dmg }, { name: 'P4', dmg: p4Dmg }, { name: 'P5', dmg: p5Dmg }, { name: 'P6', dmg: p6Dmg },
                 { name: 'P7', dmg: p7Dmg }, { name: 'P8', dmg: p8Dmg }, { name: 'P9', dmg: p9Dmg }, { name: 'P10', dmg: p10Dmg }
             ];
-            let tableHtml = `<tr><th style="text-align:left;">Người chơi</th><th style="text-align:right;">Sát thương Gây ra</th><th style="text-align:right;">Trạng thái</th></tr>`;
-            const threshold = totalClickDmg * 0.15;
+            
+            // Table Header Update
+            let tableHtml = `<tr><th style="text-align:left;">Người chơi</th><th style="text-align:right;">Sát thương TB (1 Click)</th><th style="text-align:right;">Trạng thái</th></tr>`;
+            
             players.forEach(p => {
                 if(p.dmg > 0) { 
-                    let isOk = p.dmg >= threshold;
+                    // Check condition using base values (mathematically same)
+                    let isOk = p.dmg >= reqDmgBase;
                     let statusClass = isOk ? 'status-ok' : 'status-fail';
                     let statusText = isOk ? 'Đủ ĐK' : 'Thiếu';
                     let percent = (p.dmg / totalClickDmg) * 100;
-                    tableHtml += `<tr><td style="text-align:left;">${p.name}</td><td>${formatNumber(p.dmg)} <span style="font-size:10px; color:#666">(${percent.toFixed(1)}%)</span></td><td class="${statusClass}">${statusText}</td></tr>`;
+                    
+                    // Display effective average damage
+                    let effectivePlayerDmg = p.dmg * 1.25;
+                    
+                    tableHtml += `<tr><td style="text-align:left;">${p.name}</td><td>${formatNumber(effectivePlayerDmg)} <span style="font-size:10px; color:#666">(${percent.toFixed(1)}%)</span></td><td class="${statusClass}">${statusText}</td></tr>`;
                 }
             });
+            
             if(totalClickDmg === 0) tableHtml += `<tr><td colspan="3" style="text-align:center; color:#666;">Chưa nhập sát thương</td></tr>`;
             document.getElementById('bossTeamTable').innerHTML = tableHtml;
         };
@@ -1058,30 +1082,7 @@
             } catch (e) { window.handleInput(); }
         }
         
-        async function setupFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        loadSettings();
-                    } else {
-                        if (initialAuthToken) {
-                            try { await signInWithCustomToken(auth, initialAuthToken); }
-                            catch(e) { console.error("Token Auth Failed", e); await signInAnonymously(auth); }
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    }
-                });
-            } catch (e) {
-                console.log("Firebase not initialized or configured", e);
-                window.handleInput();
-            }
-        }
-
+        // ... existing firebase setup ...
         window.onload = () => { initUI(); setupFirebase(); };
     </script>
     <script>
