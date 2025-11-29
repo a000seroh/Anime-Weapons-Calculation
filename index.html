@@ -267,12 +267,12 @@
                             <!-- FIXED: step=any allowed AND improved sync logic -->
                             <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="clickValDup" placeholder="0" oninput="window.syncFromTo('clickValDup', 'clickVal'); window.handleInput('clickValDup')"><select id="clickUnitDup" onchange="window.syncFromTo('clickUnitDup', 'clickUnit'); window.handleInput('clickUnitDup')"></select></div></div>
                             
-                            <!-- TIME INPUT MOVED HERE -->
+                            <!-- TIME INPUT CHANGED TO DAYS HOURS MINUTES -->
                             <div class="section-header" style="margin-top:15px;"><span class="label-text">THỜI GIAN CÀY</span></div>
                             <div class="time-input-group">
+                                <div class="input-wrapper"><input type="number" step="any" id="timeDays" placeholder="Ngày" oninput="window.calculateMasteryGained()"></div>
                                 <div class="input-wrapper"><input type="number" step="any" id="timeHours" placeholder="Giờ" oninput="window.calculateMasteryGained()"></div>
                                 <div class="input-wrapper"><input type="number" step="any" id="timeMinutes" placeholder="Phút" oninput="window.calculateMasteryGained()"></div>
-                                <div class="input-wrapper"><input type="number" step="any" id="timeSeconds" placeholder="Giây" oninput="window.calculateMasteryGained()"></div>
                             </div>
                         </div>
                     </div>
@@ -572,10 +572,12 @@
         // REMOVED old sync functions that caused the issue (syncClickVal, syncClickUnit)
         
         window.calculateMasteryGained = function() {
+             const d = parseFloat(document.getElementById('timeDays').value) || 0;
              const h = parseFloat(document.getElementById('timeHours').value) || 0;
              const m = parseFloat(document.getElementById('timeMinutes').value) || 0;
-             const s = parseFloat(document.getElementById('timeSeconds').value) || 0;
-             const totalSeconds = (h*3600) + (m*60) + s;
+             // Old logic: h/m/s. New logic: d/h/m -> totalSeconds
+             // 1 day = 86400s, 1 hour = 3600s, 1 minute = 60s
+             const totalSeconds = (d * 86400) + (h * 3600) + (m * 60);
              
              // Use the Gacha tab inputs
              const masteryPerClick = getRawVal('clickValDup', 'clickUnitDup');
@@ -1007,9 +1009,12 @@
                 targetRank: document.getElementById('targetRank').value,
                 bossHpVal: document.getElementById('bossHpVal').value,
                 bossHpUnit: document.getElementById('bossHpUnit').value,
+                
+                // NEW TIME FIELDS
+                timeDays: document.getElementById('timeDays').value,
                 timeHours: document.getElementById('timeHours').value,
                 timeMinutes: document.getElementById('timeMinutes').value,
-                timeSeconds: document.getElementById('timeSeconds').value,
+                
                 gachaShardsVal: document.getElementById('gachaShardsVal').value,
                 gachaShardsUnit: document.getElementById('gachaShardsUnit').value,
                 spinMode: spinMode,
@@ -1075,9 +1080,11 @@
                     document.getElementById('targetRank').value = s.targetRank || '1';
                     document.getElementById('bossHpVal').value = s.bossHpVal || '0';
                     document.getElementById('bossHpUnit').value = s.bossHpUnit || '1';
+                    
+                    // NEW TIME FIELDS
+                    document.getElementById('timeDays').value = s.timeDays || '0';
                     document.getElementById('timeHours').value = s.timeHours || '0';
                     document.getElementById('timeMinutes').value = s.timeMinutes || '0';
-                    document.getElementById('timeSeconds').value = s.timeSeconds || '0';
                     
                     document.getElementById('gachaShardsVal').value = s.gachaShardsVal || '0';
                     document.getElementById('gachaShardsUnit').value = s.gachaShardsUnit || '1';
