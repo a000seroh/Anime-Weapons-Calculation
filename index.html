@@ -215,37 +215,38 @@
                         </div>
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="clickVal" placeholder="0" oninput="window.handleInput('clickVal')"><select id="clickUnit" onchange="window.handleInput('clickUnit')"></select></div></div>
+                            <!-- Added oninput syncFromTo for bi-directional sync without interfering with typing -->
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="clickVal" placeholder="0" oninput="window.syncFromTo('clickVal', 'clickValDup'); window.handleInput('clickVal')"><select id="clickUnit" onchange="window.syncFromTo('clickUnit', 'clickUnitDup'); window.handleInput('clickUnit')"></select></div></div>
                         </div>
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">MASTERY ĐANG CÓ</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')"><select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select></div></div>
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="currentMasteryVal" placeholder="0" oninput="window.handleInput('currentMasteryVal')"><select id="currentMasteryUnit" onchange="window.handleInput('currentMasteryUnit')"></select></div></div>
                         </div>
-                        <div style="font-size:13px; color:#aaa; margin-top:15px; font-style:italic; text-align:center; line-height:1.5; font-weight:600;">*Mọi thứ tính toán chỉ là tương đối.<br>Mỗi rank sẽ cách nhau khoảng 8.4 lần.</div>
+                        <div style="font-size:13px; color:#aaa; margin-top:15px; font-style:italic; text-align:center; line-height:1.5; font-weight:600;">*Mọi thứ tính toán chỉ là tương đối.<br>Từ Rank 40 trở đi tỷ lệ tăng khoảng 8.7 lần.</div>
                     </div>
 
                     <!-- BOSS INPUTS -->
                     <div id="bossInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">MÁU BOSS (HP)</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="bossHpVal" placeholder="0" oninput="window.handleInput('bossHpVal')"><select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')"></select></div></div>
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="bossHpVal" placeholder="0" oninput="window.handleInput('bossHpVal')"><select id="bossHpUnit" onchange="window.handleInput('bossHpUnit')"></select></div></div>
                         </div>
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">SÁT THƯƠNG CLICK (NGƯỜI 1)</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="damageVal" placeholder="0" oninput="window.handleInput('damageVal')"><select id="damageUnit" onchange="window.handleInput('damageUnit')"></select></div></div>
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="damageVal" placeholder="0" oninput="window.handleInput('damageVal')"><select id="damageUnit" onchange="window.handleInput('damageUnit')"></select></div></div>
                         </div>
                         <div class="control-section" style="border-top:1px dashed #333; padding-top:15px; margin-top:15px;">
                              <div class="section-header"><span class="label-text" style="color:var(--col-boss);">NHÓM SĂN BOSS (TÙY CHỌN)</span></div>
                              <!-- Players 2-10 -->
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P2</span><input type="number" id="p2DmgVal" placeholder="Nhập DMG P2" oninput="window.calculateBoss()"><select id="p2DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P3</span><input type="number" id="p3DmgVal" placeholder="Nhập DMG P3" oninput="window.calculateBoss()"><select id="p3DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P4</span><input type="number" id="p4DmgVal" placeholder="Nhập DMG P4" oninput="window.calculateBoss()"><select id="p4DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P5</span><input type="number" id="p5DmgVal" placeholder="Nhập DMG P5" oninput="window.calculateBoss()"><select id="p5DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P7</span><input type="number" id="p7DmgVal" placeholder="Nhập DMG P7" oninput="window.calculateBoss()"><select id="p7DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P8</span><input type="number" id="p8DmgVal" placeholder="Nhập DMG P8" oninput="window.calculateBoss()"><select id="p8DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P9</span><input type="number" id="p9DmgVal" placeholder="Nhập DMG P9" oninput="window.calculateBoss()"><select id="p9DmgUnit" onchange="window.calculateBoss()"></select></div></div>
-                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P10</span><input type="number" id="p10DmgVal" placeholder="Nhập DMG P10" oninput="window.calculateBoss()"><select id="p10DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P2</span><input type="number" step="any" id="p2DmgVal" placeholder="Nhập DMG P2" oninput="window.calculateBoss()"><select id="p2DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P3</span><input type="number" step="any" id="p3DmgVal" placeholder="Nhập DMG P3" oninput="window.calculateBoss()"><select id="p3DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P4</span><input type="number" step="any" id="p4DmgVal" placeholder="Nhập DMG P4" oninput="window.calculateBoss()"><select id="p4DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P5</span><input type="number" step="any" id="p5DmgVal" placeholder="Nhập DMG P5" oninput="window.calculateBoss()"><select id="p5DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P6</span><input type="number" step="any" id="p6DmgVal" placeholder="Nhập DMG P6" oninput="window.calculateBoss()"><select id="p6DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P7</span><input type="number" step="any" id="p7DmgVal" placeholder="Nhập DMG P7" oninput="window.calculateBoss()"><select id="p7DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P8</span><input type="number" step="any" id="p8DmgVal" placeholder="Nhập DMG P8" oninput="window.calculateBoss()"><select id="p8DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P9</span><input type="number" step="any" id="p9DmgVal" placeholder="Nhập DMG P9" oninput="window.calculateBoss()"><select id="p9DmgUnit" onchange="window.calculateBoss()"></select></div></div>
+                             <div class="input-row" style="margin-bottom:8px;"><div class="input-wrapper"><span style="font-size:12px; color:#888; margin-right:8px; min-width:20px;">P10</span><input type="number" step="any" id="p10DmgVal" placeholder="Nhập DMG P10" oninput="window.calculateBoss()"><select id="p10DmgUnit" onchange="window.calculateBoss()"></select></div></div>
                         </div>
                     </div>
 
@@ -253,7 +254,7 @@
                     <div id="gachaInputs" class="hidden">
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">TỔNG SHARDS (MẢNH)</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="gachaShardsVal" placeholder="0" oninput="window.calculateGacha()"><select id="gachaShardsUnit" onchange="window.calculateGacha()"></select></div></div>
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="gachaShardsVal" placeholder="0" oninput="window.calculateGacha()"><select id="gachaShardsUnit" onchange="window.calculateGacha()"></select></div></div>
                         </div>
                         <div class="control-section">
                             <div class="section-header"><span class="label-text">CHẾ ĐỘ QUAY</span></div>
@@ -263,14 +264,15 @@
                         <div class="control-section" style="border-top:1px dashed #333; padding-top:20px; margin-top:20px;">
                             <div class="section-header"><span class="label-text" style="color:var(--col-gacha);">TÍNH MASTERY NHẬN ĐƯỢC</span></div>
                             <div class="section-header"><span class="label-text">MASTERY MỖI CLICK</span></div>
-                            <div class="input-row"><div class="input-wrapper"><input type="number" id="clickValDup" placeholder="0" oninput="window.syncClickVal(this.value)"><select id="clickUnitDup" onchange="window.syncClickUnit(this.value)"></select></div></div>
+                            <!-- FIXED: step=any allowed AND improved sync logic -->
+                            <div class="input-row"><div class="input-wrapper"><input type="number" step="any" id="clickValDup" placeholder="0" oninput="window.syncFromTo('clickValDup', 'clickVal'); window.handleInput('clickValDup')"><select id="clickUnitDup" onchange="window.syncFromTo('clickUnitDup', 'clickUnit'); window.handleInput('clickUnitDup')"></select></div></div>
                             
                             <!-- TIME INPUT MOVED HERE -->
                             <div class="section-header" style="margin-top:15px;"><span class="label-text">THỜI GIAN CÀY</span></div>
                             <div class="time-input-group">
-                                <div class="input-wrapper"><input type="number" id="timeHours" placeholder="Giờ" oninput="window.calculateMasteryGained()"></div>
-                                <div class="input-wrapper"><input type="number" id="timeMinutes" placeholder="Phút" oninput="window.calculateMasteryGained()"></div>
-                                <div class="input-wrapper"><input type="number" id="timeSeconds" placeholder="Giây" oninput="window.calculateMasteryGained()"></div>
+                                <div class="input-wrapper"><input type="number" step="any" id="timeHours" placeholder="Giờ" oninput="window.calculateMasteryGained()"></div>
+                                <div class="input-wrapper"><input type="number" step="any" id="timeMinutes" placeholder="Phút" oninput="window.calculateMasteryGained()"></div>
+                                <div class="input-wrapper"><input type="number" step="any" id="timeSeconds" placeholder="Giây" oninput="window.calculateMasteryGained()"></div>
                             </div>
                         </div>
                     </div>
@@ -292,9 +294,9 @@
                             <div style="font-size:11px; color:#666; text-align:center; margin-top:5px;">Giả định: 2 lần / 1 giờ</div>
                         </div>
                         <div class="control-section" style="display:none;"> 
-                            <div class="input-wrapper"><input type="number" id="raidRefStage" value="100" oninput="window.calculateRaid()"></div>
-                            <div class="input-wrapper"><input type="number" id="raidRefHpVal" value="4" oninput="window.calculateRaid()"><select id="raidRefHpUnit" onchange="window.calculateRaid()"></select></div>
-                            <div class="input-wrapper"><input type="number" id="raidGrowth" value="10.5" oninput="window.calculateRaid()"></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="raidRefStage" value="100" oninput="window.calculateRaid()"></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="raidRefHpVal" value="4" oninput="window.calculateRaid()"><select id="raidRefHpUnit" onchange="window.calculateRaid()"></select></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="raidGrowth" value="10.5" oninput="window.calculateRaid()"></div>
                         </div>
                     </div>
 
@@ -315,9 +317,9 @@
                             <div style="font-size:11px; color:#666; text-align:center; margin-top:5px;">Giả định: 2 lần / 1 giờ</div>
                         </div>
                         <div class="control-section" style="display:none;"> 
-                            <div class="input-wrapper"><input type="number" id="defRefWave" value="50" oninput="window.calculateDefense()"></div>
-                            <div class="input-wrapper"><input type="number" id="defRefHpVal" value="3" oninput="window.calculateDefense()"><select id="defRefHpUnit" onchange="window.calculateDefense()"></select></div>
-                            <div class="input-wrapper"><input type="number" id="defGrowth" value="11" oninput="window.calculateDefense()"></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="defRefWave" value="50" oninput="window.calculateDefense()"></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="defRefHpVal" value="3" oninput="window.calculateDefense()"><select id="defRefHpUnit" onchange="window.calculateDefense()"></select></div>
+                            <div class="input-wrapper"><input type="number" step="any" id="defGrowth" value="11" oninput="window.calculateDefense()"></div>
                         </div>
                     </div>
                 </div>
@@ -491,7 +493,8 @@
             }
             const displayVal = rawVal / Math.pow(10, UNITS[unitIdx].exp);
             const unitName = UNITS[unitIdx].name === '' ? '' : UNITS[unitIdx].name;
-            return `${displayVal.toFixed(2)}${unitName}`;
+            // UPDATE: Removed fixed 2 decimals if not needed
+            return `${parseFloat(displayVal.toFixed(2))}${unitName}`;
         }
 
         function formatBigTime(totalSeconds) {
@@ -524,9 +527,28 @@
         function buildRankCosts() {
             let currentCost = BASE_COST_MAGNITUDE * Math.pow(10, K_EXPONENT); 
             RANK_COSTS[0] = currentCost;
-            for (let i = 1; i <= 99; i++) {
+            
+            // Rank 0 to 39: Old scaling (8.4x)
+            for (let i = 1; i < 40; i++) {
                 currentCost *= SCALING_FACTOR;
                 RANK_COSTS[i] = currentCost;
+            }
+
+            // Rank 40 fixed (40->41)
+            // 1.14 Td = 1.14 * 10^42
+            currentCost = 1.14 * Math.pow(10, 42);
+            RANK_COSTS[40] = currentCost;
+
+            // Ranks 41+: New scaling (~8.7x derived from your values)
+            const SCALING_FACTOR_HIGH = 8.7;
+            for (let i = 41; i <= 99; i++) {
+                 // Use exact provided values for 41-43
+                 if (i === 41) currentCost = 9.94 * Math.pow(10, 42); // 41->42
+                 else if (i === 42) currentCost = 86.48 * Math.pow(10, 42); // 42->43
+                 else if (i === 43) currentCost = 752.4 * Math.pow(10, 42); // 43->44
+                 else currentCost *= SCALING_FACTOR_HIGH; // 44+ uses scaling
+                 
+                 RANK_COSTS[i] = currentCost;
             }
         }
 
@@ -540,19 +562,14 @@
             saveSettings();
         };
 
-        window.syncClickVal = function(val) {
-            const main = document.getElementById('clickVal');
-            const dup = document.getElementById('clickValDup');
-            if(main && dup) { main.value = val; dup.value = val; }
-            window.handleInput();
+        // NEW SYNC LOGIC: Only update target from source, prevents cursor jumps and decimal issues
+        window.syncFromTo = function(srcId, destId) {
+            const src = document.getElementById(srcId);
+            const dest = document.getElementById(destId);
+            if(src && dest) { dest.value = src.value; }
         }
         
-        window.syncClickUnit = function(val) {
-            const main = document.getElementById('clickUnit');
-            const dup = document.getElementById('clickUnitDup');
-            if(main && dup) { main.value = val; dup.value = val; }
-            window.handleInput();
-        }
+        // REMOVED old sync functions that caused the issue (syncClickVal, syncClickUnit)
         
         window.calculateMasteryGained = function() {
              const h = parseFloat(document.getElementById('timeHours').value) || 0;
@@ -560,6 +577,7 @@
              const s = parseFloat(document.getElementById('timeSeconds').value) || 0;
              const totalSeconds = (h*3600) + (m*60) + s;
              
+             // Use the Gacha tab inputs
              const masteryPerClick = getRawVal('clickValDup', 'clickUnitDup');
              
              const gainedAuto = masteryPerClick * CPS_AUTO * totalSeconds;
@@ -928,9 +946,12 @@
                 });
             });
             
-            document.getElementById('clickUnitDup').value = document.getElementById('clickUnit').value;
-            document.getElementById('clickValDup').value = document.getElementById('clickVal').value;
-            
+            // Initial Sync
+            const mainClickVal = document.getElementById('clickVal').value;
+            const mainClickUnit = document.getElementById('clickUnit').value;
+            document.getElementById('clickValDup').value = mainClickVal;
+            document.getElementById('clickUnitDup').value = mainClickUnit;
+
             const dcIndex = UNITS.findIndex(u => u.name === 'Dc');
             if(dcIndex > -1 && document.getElementById('raidRefHpUnit')) document.getElementById('raidRefHpUnit').value = dcIndex;
             const ddIndex = UNITS.findIndex(u => u.name === 'Dd');
@@ -978,8 +999,9 @@
                 
                 clickVal: document.getElementById('clickVal').value,
                 clickUnit: document.getElementById('clickUnit').value,
-                clickValDup: document.getElementById('clickValDup').value,
-                clickUnitDup: document.getElementById('clickUnitDup').value,
+                // Removed dup from save to avoid confusion on load, we sync on load
+                // clickValDup: document.getElementById('clickValDup').value,
+                // clickUnitDup: document.getElementById('clickUnitDup').value,
 
                 currentRank: document.getElementById('currentRank').value,
                 targetRank: document.getElementById('targetRank').value,
@@ -1023,8 +1045,10 @@
                     document.getElementById('currentMasteryUnit').value = s.currentMasteryUnit || '1';
                     document.getElementById('clickVal').value = s.clickVal || '0';
                     document.getElementById('clickUnit').value = s.clickUnit || '1';
-                    document.getElementById('clickValDup').value = s.clickValDup || s.clickVal || '0';
-                    document.getElementById('clickUnitDup').value = s.clickUnitDup || s.clickUnit || '1';
+                    // Sync dup immediately
+                    document.getElementById('clickValDup').value = s.clickVal || '0';
+                    document.getElementById('clickUnitDup').value = s.clickUnit || '1';
+                    
                     document.getElementById('damageVal').value = s.damageVal || '0';
                     document.getElementById('damageUnit').value = s.damageUnit || '1';
                     
